@@ -13,7 +13,7 @@
 // The Reusable Card Component
 function StatCard({ label, metric }) {
   return (
-    <div style={{ border: "2px solid #333", padding: "15px", margin: "10px", display: "inline-block", borderRadius: "8px" }}>
+    <div style={{ border: "2px solid #333", : "15px", margin: "10px", display: "inline-block", borderRadius: "8px" }}>
       <h3 style={{ margin: "0 0 10px 0", color: "gray" }}>{label}</h3>
       <h1 style={{ margin: "0" }}>{metric}</h1>
     </div>
