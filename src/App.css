@@ -47,3 +47,21 @@
   color: #212529;
   margin: 8px 0;
 }
+/* Tech Badge Styling */
+.badge-container {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.tech-badge {
+  background-color: #e9ecef;
+  color: #495057;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  border: 1px solid #ced4da;
+}
