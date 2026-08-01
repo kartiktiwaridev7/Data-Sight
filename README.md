@@ -2,7 +2,7 @@
 
 A frontend data visualization architecture built with React and Vite, engineered to dynamically ingest, parse, and map datasets entirely within the browser.
 
-**🔴 Live Production Build:** [View the Dashboard Here](https://kartiktiwaridev7.github.io/React-learning-/)
+**🔴 Live Production Build:** [View the Dashboard Here](https://kartiktiwaridev7.github.io/Data-Sight/)
 
 ## Architecture Overview
 This project demonstrates advanced frontend state management and data handling. Rather than relying on a static hardcoded file or a dedicated backend server, this application utilizes the browser's native `FileReader` API to accept custom JSON payloads from the user. It then dynamically recalculates aggregate metrics and renders interactive time-series visualizations in real-time.
@@ -21,8 +21,9 @@ This project demonstrates advanced frontend state management and data handling. 
 ## Local Installation & Testing
 To run this visualization tool locally on your own machine:
 
+## Local Installation & Testing
+To run this visualization tool locally on your own machine:
+
 1. Clone the repository:
    ```bash
-   git clone [https://github.com/kartiktiwaridev7/React-learning-.git](https://github.com/kartiktiwaridev7/React-learning-.git)
-
-   
+   git clone https://github.com/kartiktiwaridev7/Data-Sight.git  
