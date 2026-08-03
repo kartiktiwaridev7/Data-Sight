@@ -91,13 +91,12 @@ function App() {
 
         {/* The Upload Input */}
         {!data && (
-          <div style={{ margin: '40px 0', padding: '40px', border: '2px dashed #cbd5e1', borderRadius: '12px' }}>
-            <h3 style={{ marginTop: 0 }}>Upload Dataset</h3>
+          <div className="upload-zone">
+            <h3>Upload Dataset</h3>
             <input
               type="file"
               accept=".json, .csv"
               onChange={handleFileUpload}
-              style={{ fontSize: '1rem', cursor: 'pointer' }}
             />
           </div>
         )}
@@ -110,11 +109,9 @@ function App() {
 
             {/* NEW: Display the AI Prediction here */}
             {predictedRevenue !== null && (
-              <div style={{ marginTop: '20px', padding: '20px', backgroundColor: '#1e1e2f', borderRadius: '12px', border: '1px solid #4a4a6a' }}>
-                <h3 style={{ color: '#00d2ff', margin: 0 }}>AI Predicted Next Day Revenue</h3>
-                <p style={{ fontSize: '1.5rem', fontWeight: 'bold', margin: '10px 0 0 0', color: '#ffffff' }}>
-                  ${predictedRevenue}
-                </p>
+              <div className="ai-predict-panel">
+                <h3>AI Predicted Next Day Revenue</h3>
+                <p>${predictedRevenue}</p>
               </div>
             )}
 
