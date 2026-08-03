@@ -3,6 +3,7 @@ import './App.css';
 import StatCard from './StatCard';
 import TechBadge from './TechBadge';
 import SummaryPanel from './SummaryPanel';
+import Papa from 'papaparse';
 import RevenueChart from './RevenueChart';
 
 function App() {
@@ -11,49 +12,67 @@ function App() {
   // NEW: State to hold the Scikit-Learn prediction from Python
   const [predictedRevenue, setPredictedRevenue] = useState(null); 
 
-  // 2. The File Ingestion Engine
+
+  // 2.We are adding The Multi-Format File Ingestion Engine
   const handleFileUpload = (event) => {
     const file = event.target.files[0];
     if (!file) return;
 
-    const reader = new FileReader();
-    // Notice the 'async' keyword added here so we can await the Python backend
-    reader.onload = async (e) => { 
+    // Grab the file extension (json or csv)
+    const fileExtension = file.name.split('.').pop().toLowerCase();
+
+    // Helper function to send processed data to the Python Backend
+    const processAndSendData = async (parsedData) => {
+      setData(parsedData); // Update charts
       try {
-        const json = JSON.parse(e.target.result);
-        setData(json); // Inject the uploaded data into React state
+        const response = await fetch("http://127.0.0.1:8000/analyze", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(parsedData), 
+        });
 
-        // --- NEW PREDICTIVE API BRIDGE ---
-        // As soon as React parses the JSON, we shoot a copy to your ML backend
-        try {
-          const response = await fetch("http://127.0.0.1:8000/analyze", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(json), // Transporting the data
-          });
-
-          if (!response.ok) throw new Error("Network response was not ok");
-
-          const backendResult = await response.json();
-          console.log("Brain Engine Response:", backendResult);
-          
-          // Save the AI prediction to your React state
-          setPredictedRevenue(backendResult.predicted_next_day_revenue);
-
-        } catch (error) {
-          console.error("Failed to connect to the predictive engine:", error);
-        }
-        // ---------------------------------
-
+        if (!response.ok) throw new Error("Network response was not ok");
+        const backendResult = await response.json();
+        setPredictedRevenue(backendResult.predicted_next_day_revenue);
       } catch (error) {
-        alert("Error: Please upload a valid JSON file.");
+        console.error("Failed to connect to the predictive engine:", error);
       }
     };
-    reader.readAsText(file);
-  };
 
+    // Route 1: Handle JSON Files
+    if (fileExtension === 'json') {
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        try {
+          const json = JSON.parse(e.target.result);
+          await processAndSendData(json);
+        } catch (error) {
+          alert("Error: Please upload a valid JSON file.");
+        }
+      };
+      reader.readAsText(file);
+    } 
+    // Route 2: Handle CSV Files using Papa Parse
+    
+     // Route 2: Handle CSV Files using Papa Parse
+    else if (fileExtension === 'csv') {
+      Papa.parse(file, {
+        header: true, // Tells the parser the first row contains the column names
+        dynamicTyping: true, // MAGIC FEATURE: Automatically converts string numbers into real math numbers
+        skipEmptyLines: true, // MAGIC FIX 1: Ignores trailing blank lines at the bottom of the CSV
+        transformHeader: (header) => header.trim(), // MAGIC FIX 2: Removes accidental spaces in column names
+        complete: async (results) => {
+          // results.data contains the perfectly formatted JSON array
+          await processAndSendData(results.data);
+        },
+        error: (error) => {
+          alert("Error parsing CSV file:", error);
+        }
+     });
+    } else {
+      alert("Please upload a .json or .csv file");
+    }
+  };
   // 3. Update Aggregates (Safeguard against null data)
   const totalRevenue = useMemo(() => {
     if (!data) return 0;
@@ -69,15 +88,15 @@ function App() {
     <div className="dashboard-wrapper">
       <header className="dashboard-header">
         <h1>My Analytics Dashboard</h1>
-        
+
         {/* The Upload Input */}
         {!data && (
           <div style={{ margin: '40px 0', padding: '40px', border: '2px dashed #cbd5e1', borderRadius: '12px' }}>
             <h3 style={{ marginTop: 0 }}>Upload Dataset</h3>
-            <input 
-              type="file" 
-              accept=".json" 
-              onChange={handleFileUpload} 
+            <input
+              type="file"
+              accept=".json, .csv"
+              onChange={handleFileUpload}
               style={{ fontSize: '1rem', cursor: 'pointer' }}
             />
           </div>
@@ -86,15 +105,16 @@ function App() {
         {/* Render Summary and Badges ONLY if data exists */}
         {data && (
           <>
-            <SummaryPanel totalUsers={totalUsers} totalRevenue={totalRevenue} />
-            
+            {/* I commented this line out because this is for the numbers in my dashboard */}
+            {/* <SummaryPanel totalUsers={totalUsers} totalRevenue={totalRevenue} /> */}
+
             {/* NEW: Display the AI Prediction here */}
             {predictedRevenue !== null && (
               <div style={{ marginTop: '20px', padding: '20px', backgroundColor: '#1e1e2f', borderRadius: '12px', border: '1px solid #4a4a6a' }}>
                 <h3 style={{ color: '#00d2ff', margin: 0 }}>AI Predicted Next Day Revenue</h3>
-               <p style={{ fontSize: '1.5rem', fontWeight: 'bold', margin: '10px 0 0 0', color: '#ffffff' }}>
-  ${predictedRevenue}
-</p>
+                <p style={{ fontSize: '1.5rem', fontWeight: 'bold', margin: '10px 0 0 0', color: '#ffffff' }}>
+                  ${predictedRevenue}
+                </p>
               </div>
             )}
 
@@ -106,21 +126,11 @@ function App() {
           </>
         )}
       </header>
-      
-      {/* Render Chart and Grid ONLY if data exists */}
+
+      {/* Render Chart ONLY if data exists */}
       {data && (
         <>
           <RevenueChart data={data} />
-          <main className="dashboard-grid">
-            {data.map((dayData, index) => (
-              <StatCard 
-                key={index} 
-                date={dayData.date} 
-                users={dayData.users} 
-                revenue={dayData.revenue} 
-              />
-            ))}
-          </main>
         </>
       )}
     </div>
