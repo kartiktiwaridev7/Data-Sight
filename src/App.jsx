@@ -123,12 +123,31 @@ function App() {
           </>
         )}
       </header>
-
-      {/* Render Chart ONLY if data exists */}
+    {/* Render Chart and AI Prediction ONLY if data exists */}
       {data && (
         <>
+          {predictedRevenue !== null && (
+            <div style={{
+              margin: '20px auto 30px auto',
+              padding: '24px',
+              backgroundColor: '#161625',
+              borderRadius: '16px',
+              border: '1px solid #2b2b45',
+              textAlign: 'center',
+              boxShadow: '0 8px 24px rgba(0,0,0,0.4)'
+            }}>
+              <h3 style={{ color: '#00d2ff', margin: 0, fontSize: '1.2rem' }}>
+                AI Predicted Next Day Revenue
+              </h3>
+              <p style={{ fontSize: '2.2rem', fontWeight: 'bold', margin: '12px 0 0 0', color: '#ffffff' }}>
+                ${predictedRevenue}
+              </p>
+            </div>
+          )}
+
           <RevenueChart data={data} />
         </>
+        
       )}
     </div>
   );
