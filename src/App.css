@@ -41,7 +41,9 @@ body {
 }
 
 .nav-links a {
-  display: block;
+  display: flex; /* Aligns icon and text */
+  align-items: center;
+  gap: 12px; /* Adds perfect spacing between the icon and the word */
   color: #a0a0b5;
   text-decoration: none;
   font-size: 1.1rem;
