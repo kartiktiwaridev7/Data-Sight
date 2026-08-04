@@ -91,14 +91,19 @@ function Dashboard() {
         <h1>My Analytics Dashboard</h1>
 
         {/* The Upload Input */}
+
         {!data && (
           <div className="upload-zone">
             <h3>Upload Dataset</h3>
-            <input
-              type="file"
-              accept=".json, .csv"
-              onChange={handleFileUpload}
-            />
+          <label className="custom-file-upload">
+              <input
+                type="file"
+                accept=".json, .csv"
+                onChange={handleFileUpload}
+                style={{ display: 'none' }}
+              />
+              Select CSV Dataset
+            </label>
           </div>
         )}
 
