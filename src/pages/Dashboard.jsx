@@ -110,22 +110,7 @@ function Dashboard() {
         {/* Render Summary and Badges ONLY if data exists */}
         {data && (
           <>
-            {/* I commented this line out because this is for the numbers in my dashboard */}
-            {/* <SummaryPanel totalUsers={totalUsers} totalRevenue={totalRevenue} /> */}
-
-            {/* NEW: Display the AI Prediction here */}
-            {predictedRevenue !== null && (
-              <div className="ai-predict-panel">
-                <h3>AI Predicted Next Day Revenue</h3>
-                <p>${predictedRevenue}</p>
-              </div>
-            )}
-
-            <div className="badge-container">
-              <TechBadge name="React" />
-              <TechBadge name="Vite" />
-              <TechBadge name="CSS Grid" />
-            </div>
+           
           </>
         )}
       </header>

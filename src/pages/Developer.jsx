@@ -34,7 +34,7 @@ function Developer() {
           I specialize in bridging the gap between clean, modern user interfaces and intelligent backend systems. My core focus is on frontend web development and integrating machine learning models—deliberately focusing on AI-driven web applications rather than traditional Java tracks.
         </p>
         <p style={{ color: '#a0a0b5', lineHeight: '1.8' }}>
-          Past projects include deploying full-pipeline applications like <strong>CardioCore</strong> (a web-based hospital application featuring a heart disease prediction model), combining responsive React UIs with Scikit-Learn backends. When I am not architecting code, I focus on personal well-being through calisthenics, meditation, and reading fantasy novels.
+          Past projects include deploying full-pipeline applications like <strong>CardioCore</strong> (a web-based hospital application featuring a heart disease prediction model), combining responsive React UIs with Scikit-Learn backends. When I am not architecting code, I focus on personal well-being through Gym , Reading Book , and Travelling with the freinds .
         </p>
       </div>
     </div>
