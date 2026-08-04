@@ -2,6 +2,7 @@ import { Routes, Route, Link } from 'react-router-dom';
 import { FiPieChart, FiCpu } from 'react-icons/fi';
 import Dashboard from './pages/Dashboard';
 import About from './pages/About';
+import Developer from './pages/Developer';
 import './App.css';
 
 function App() {
