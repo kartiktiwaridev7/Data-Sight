@@ -10,7 +10,7 @@
    -------------------------------------------------------------------------- */
 :root {
   /* Core surfaces */
-  --bg-base: #0a0b14;
+  --bg-base: #000000;
   --bg-elevated: #12131f;
   --bg-card: #161826;
   --bg-card-hover: #1b1e30;
@@ -18,7 +18,7 @@
 
   /* Borders */
   --border-subtle: #23253a;
-  --border-strong: #33355a;
+  --border-strong: #000000;
   --border-glow: rgba(0, 210, 255, 0.35);
 
   /* Text */
@@ -83,7 +83,7 @@ body {
 }
 
 ::selection {
-  background: rgba(0, 210, 255, 0.25);
+  background: rgb(0, 0, 0);
   color: #fff;
 }
 
