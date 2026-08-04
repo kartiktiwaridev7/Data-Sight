@@ -11,7 +11,8 @@ function Dashboard() {
   // 1. Initialize State (null means no file uploaded yet)
   const [data, setData] = useState(null);
   // NEW: State to hold the Scikit-Learn prediction from Python
-  const [predictedRevenue, setPredictedRevenue] = useState(null); 
+  const [mlData, setMlData] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
 
   // 2.We are adding The Multi-Format File Ingestion Engine
@@ -23,22 +24,29 @@ function Dashboard() {
     const fileExtension = file.name.split('.').pop().toLowerCase();
 
     // Helper function to send processed data to the Python Backend
-    const processAndSendData = async (parsedData) => {
-      setData(parsedData); // Update charts
-      try {
-        const response = await fetch("http://127.0.0.1:8000/analyze", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(parsedData), 
-        });
+  const processAndSendData = async (parsedData) => {
+    setIsLoading(true); // 1. AI starts thinking
 
-        if (!response.ok) throw new Error("Network response was not ok");
-        const backendResult = await response.json();
-        setPredictedRevenue(backendResult.predicted_next_day_revenue);
-      } catch (error) {
-        console.error("Failed to connect to the predictive engine:", error);
-      }
-    };
+    try {
+      const response = await fetch("http://127.0.0.1:8000/analyze", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(parsedData),
+      });
+
+      if (!response.ok) throw new Error("Network response was not ok");
+      
+      const backendResult = await response.json(); 
+      setMlData(backendResult); 
+      setData(parsedData); // Ensure charts get updated too
+      
+    } catch (error) {
+      console.error("Failed to connect to the predictive engine:", error);
+      alert("Error processing data. Check console.");
+    } finally {
+      setIsLoading(false); // 2. AI is done, turn off loading state
+    }
+  };
 
     // Route 1: Handle JSON Files
     if (fileExtension === 'json') {
@@ -92,20 +100,26 @@ function Dashboard() {
 
         {/* The Upload Input */}
 
-        {!data && (
-          <div className="upload-zone">
-            <h3>Upload Dataset</h3>
-          <label className="custom-file-upload">
-              <input
-                type="file"
-                accept=".json, .csv"
-                onChange={handleFileUpload}
-                style={{ display: 'none' }}
-              />
-              Select CSV Dataset
-            </label>
+        <div className="upload-zone" style={{ textAlign: 'center' }}>
+        <h3 style={{ color: '#ffffff', marginBottom: '10px' }}>Upload Dataset</h3>
+        
+        {/* Hide the button while loading, show a thinking message instead */}
+        {isLoading ? (
+          <div style={{ color: '#00d2ff', marginTop: '20px', fontWeight: 'bold', fontSize: '1.2rem' }}>
+            ⚙️ AI Engine is analyzing data...
           </div>
+        ) : (
+          <label className="custom-file-upload">
+            <input
+              type="file"
+              accept=".json, .csv"
+              onChange={handleFileUpload}
+              style={{ display: 'none' }}
+            />
+            Select CSV Dataset
+          </label>
         )}
+      </div>
 
         {/* Render Summary and Badges ONLY if data exists */}
         {data && (
@@ -117,24 +131,54 @@ function Dashboard() {
     {/* Render Chart and AI Prediction ONLY if data exists */}
       {data && (
         <>
-          {predictedRevenue !== null && (
-            <div style={{
-              margin: '20px auto 30px auto',
-              padding: '24px',
-              backgroundColor: '#161625',
-              borderRadius: '16px',
-              border: '1px solid #2b2b45',
-              textAlign: 'center',
-              boxShadow: '0 8px 24px rgba(0,0,0,0.4)'
+{/* NEW: Enterprise ML Metrics Grid */}
+      {mlData && (
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+          gap: '24px',
+          marginTop: '30px',
+          marginBottom: '30px'
+        }}>
+          
+          {/* Main Prediction Card */}
+          <div style={{ backgroundColor: '#161625', padding: '24px', borderRadius: '16px', border: '1px solid #2b2b45', textAlign: 'center', boxShadow: '0 8px 24px rgba(0,0,0,0.4)' }}>
+            <h3 style={{ color: '#00d2ff', margin: '0 0 10px 0' }}>Predicted Revenue</h3>
+            <p style={{ fontSize: '2.2rem', fontWeight: 'bold', margin: 0, color: '#ffffff' }}>
+              ${mlData.predicted_next_day_revenue}
+            </p>
+          </div>
+
+          {/* Confidence Interval Card */}
+          <div style={{ backgroundColor: '#161625', padding: '24px', borderRadius: '16px', border: '1px solid #2b2b45', textAlign: 'center' }}>
+            <h3 style={{ color: '#00d2ff', margin: '0 0 10px 0' }}>Expected Range</h3>
+            <p style={{ fontSize: '1.2rem', fontWeight: 'bold', margin: '15px 0 0 0', color: '#a0a0b5' }}>
+              ${mlData.prediction_lower_bound} - ${mlData.prediction_upper_bound}
+            </p>
+            <p style={{ fontSize: '0.85rem', color: '#6b6b85', marginTop: '8px' }}>Based on 95% confidence interval</p>
+          </div>
+
+          {/* Model Health Card */}
+          <div style={{ backgroundColor: '#161625', padding: '24px', borderRadius: '16px', border: '1px solid #2b2b45', textAlign: 'center' }}>
+            <h3 style={{ color: '#00d2ff', margin: '0 0 10px 0' }}>Model Health</h3>
+            
+            {/* Dynamic color changing based on backend confidence! */}
+            <p style={{ 
+              fontSize: '1.2rem', 
+              fontWeight: 'bold', 
+              margin: '15px 0 5px 0', 
+              color: mlData.model_confidence === 'high' ? '#00e676' : mlData.model_confidence === 'medium' ? '#ffea00' : '#ff3d00' 
             }}>
-              <h3 style={{ color: '#00d2ff', margin: 0, fontSize: '1.2rem' }}>
-                AI Predicted Next Day Revenue
-              </h3>
-              <p style={{ fontSize: '2.2rem', fontWeight: 'bold', margin: '12px 0 0 0', color: '#ffffff' }}>
-                ${predictedRevenue}
-              </p>
-            </div>
-          )}
+              {mlData.model_confidence.toUpperCase()} CONFIDENCE
+            </p>
+            
+            <p style={{ fontSize: '0.9rem', color: '#a0a0b5', margin: 0 }}>
+              Accuracy Score (R²): {mlData.model_r2}
+            </p>
+          </div>
+
+        </div>
+      )}
 
           <RevenueChart data={data} />
         </>
