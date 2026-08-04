@@ -1,6 +1,8 @@
 /* ==========================================================================
    App.css — Data Analytics Dashboard
-   Dark theme, industry-level visual system
+   Dark theme — trimmed to only the classes App.jsx actually renders:
+   .dashboard-wrapper, .dashboard-header, .upload-zone, .badge-container,
+   .tech-badge, .ai-predict-panel, .chart-container
    ========================================================================== */
 
 /* --------------------------------------------------------------------------
@@ -22,23 +24,19 @@
   /* Text */
   --text-primary: #f1f2f8;
   --text-secondary: #9297b5;
-  --text-muted: #5c6188;
 
   /* Accents */
   --accent-cyan: #00d2ff;
   --accent-blue: #4d7eff;
   --accent-violet: #8b5cf6;
-  --accent-green: #22e6a5;
-  --accent-red: #ff5470;
 
   /* Gradients */
   --gradient-title: linear-gradient(120deg, #7dd8ff 0%, #4d7eff 50%, #8b5cf6 100%);
   --gradient-accent-bar: linear-gradient(90deg, var(--accent-cyan), var(--accent-violet));
-  --gradient-card-sheen: linear-gradient(135deg, rgba(0, 210, 255, 0.06), transparent 60%);
   --gradient-ai-panel: radial-gradient(circle at 15% 20%, rgba(0, 210, 255, 0.12), transparent 45%),
                        linear-gradient(155deg, #171a2c 0%, #0d0e18 100%);
 
-  /* Elevation (dark-mode shadows lean on glow + deep black, not soft grey) */
+  /* Elevation */
   --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.4);
   --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.5);
   --shadow-lg: 0 20px 48px rgba(0, 0, 0, 0.55);
@@ -47,7 +45,6 @@
 
   /* Radius */
   --radius-sm: 8px;
-  --radius-md: 14px;
   --radius-lg: 20px;
   --radius-pill: 999px;
 
@@ -90,7 +87,6 @@ body {
   color: #fff;
 }
 
-/* Slim, dark-mode scrollbar */
 ::-webkit-scrollbar {
   width: 10px;
   height: 10px;
@@ -223,77 +219,7 @@ body {
 }
 
 /* --------------------------------------------------------------------------
-   5. Stat Grid & Cards
-   -------------------------------------------------------------------------- */
-.dashboard-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 24px;
-  margin: 32px 0;
-}
-
-.stat-card {
-  background: var(--bg-card);
-  padding: 24px;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--border-subtle);
-  border-top: 3px solid var(--accent-blue);
-  box-shadow: var(--shadow-sm);
-  position: relative;
-  overflow: hidden;
-  transition: transform var(--duration-base) var(--ease-out),
-              box-shadow var(--duration-base) var(--ease-out),
-              border-color var(--duration-base) var(--ease-out);
-  animation: fadeInUp var(--duration-slow) var(--ease-out) both;
-}
-
-.stat-card:nth-child(1) { animation-delay: 60ms; }
-.stat-card:nth-child(2) { animation-delay: 120ms; }
-.stat-card:nth-child(3) { animation-delay: 180ms; }
-.stat-card:nth-child(4) { animation-delay: 240ms; }
-
-.stat-card::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: var(--gradient-card-sheen);
-  opacity: 0;
-  transition: opacity var(--duration-base) var(--ease-out);
-}
-
-.stat-card:hover {
-  transform: translateY(-6px);
-  box-shadow: var(--shadow-lg);
-  border-color: var(--border-strong);
-}
-
-.stat-card:hover::before {
-  opacity: 1;
-}
-
-.stat-card h3 {
-  margin-top: 0;
-  color: var(--text-secondary);
-  font-size: 0.82rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.07em;
-  position: relative;
-  z-index: 1;
-}
-
-.metric {
-  font-size: 1.85rem;
-  font-weight: 800;
-  color: var(--text-primary);
-  margin: 8px 0;
-  letter-spacing: -0.02em;
-  position: relative;
-  z-index: 1;
-}
-
-/* --------------------------------------------------------------------------
-   6. Tech Badges
+   5. Tech Badges
    -------------------------------------------------------------------------- */
 .badge-container {
   display: flex;
@@ -329,56 +255,7 @@ body {
 }
 
 /* --------------------------------------------------------------------------
-   7. Summary Panel
-   -------------------------------------------------------------------------- */
-.summary-panel {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 48px;
-  margin: 32px auto;
-  padding: 28px 24px;
-  background: var(--bg-card);
-  border-radius: var(--radius-md);
-  border: 1px solid var(--border-subtle);
-  box-shadow: var(--shadow-sm);
-  max-width: 600px;
-  animation: fadeInUp var(--duration-slow) var(--ease-out);
-}
-
-.summary-box {
-  text-align: center;
-  transition: transform var(--duration-fast) var(--ease-out);
-}
-
-.summary-box:hover {
-  transform: translateY(-3px);
-}
-
-.summary-box h4 {
-  margin: 0 0 8px;
-  color: var(--text-secondary);
-  font-size: 0.78rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.09em;
-}
-
-.summary-value {
-  margin: 0;
-  font-size: 2.2rem;
-  font-weight: 800;
-  color: var(--text-primary);
-  letter-spacing: -0.02em;
-}
-
-.summary-box.highlight .summary-value {
-  color: var(--accent-green);
-  text-shadow: 0 0 20px rgba(34, 230, 165, 0.35);
-}
-
-/* --------------------------------------------------------------------------
-   8. AI Prediction Panel
+   6. AI Prediction Panel
    -------------------------------------------------------------------------- */
 .ai-predict-panel {
   margin: 40px auto 0;
@@ -443,7 +320,7 @@ body {
 }
 
 /* --------------------------------------------------------------------------
-   9. Chart Container
+   7. Chart Container (used by RevenueChart)
    -------------------------------------------------------------------------- */
 .chart-container {
   background: var(--bg-card);
@@ -471,10 +348,8 @@ body {
   margin-bottom: 24px;
 }
 
-/* Recharts renders its own SVG text/lines — these overrides only apply if
-   RevenueChart.jsx uses currentColor or inherits fill/stroke from CSS.
-   If your chart still shows a white background or dark text after this,
-   RevenueChart.jsx has hardcoded colors that need updating directly. */
+/* Recharts overrides — only take effect if RevenueChart.jsx inherits color
+   instead of hardcoding stroke/fill props directly. */
 .chart-container .recharts-cartesian-grid line {
   stroke: var(--border-subtle);
 }
@@ -492,74 +367,7 @@ body {
 }
 
 /* --------------------------------------------------------------------------
-   10. Buttons
-   -------------------------------------------------------------------------- */
-.btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 11px 22px;
-  border-radius: var(--radius-sm);
-  border: none;
-  font-family: inherit;
-  font-size: 0.9rem;
-  font-weight: 600;
-  cursor: pointer;
-  background: linear-gradient(135deg, var(--accent-blue), var(--accent-violet));
-  color: #ffffff;
-  box-shadow: var(--shadow-sm);
-  transition: transform var(--duration-fast) var(--ease-out),
-              box-shadow var(--duration-fast) var(--ease-out),
-              filter var(--duration-fast) var(--ease-out);
-}
-
-.btn:hover {
-  filter: brightness(1.1);
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
-}
-
-.btn:active {
-  transform: translateY(0);
-}
-
-.btn:focus-visible {
-  outline: none;
-  box-shadow: var(--shadow-focus);
-}
-
-.btn-secondary {
-  background: var(--bg-card);
-  border: 1px solid var(--border-strong);
-  color: var(--text-primary);
-}
-
-.btn-secondary:hover {
-  background: var(--bg-card-hover);
-  border-color: var(--accent-cyan);
-}
-
-/* --------------------------------------------------------------------------
-   11. Loading / Skeleton States
-   -------------------------------------------------------------------------- */
-.skeleton {
-  background: linear-gradient(90deg, var(--border-subtle) 25%, var(--bg-card-hover) 37%, var(--border-subtle) 63%);
-  background-size: 400% 100%;
-  animation: skeletonShimmer 1.4s ease infinite;
-  border-radius: var(--radius-sm);
-}
-
-.spinner {
-  width: 20px;
-  height: 20px;
-  border: 2px solid var(--border-subtle);
-  border-top-color: var(--accent-cyan);
-  border-radius: 50%;
-  animation: spin 0.7s linear infinite;
-}
-
-/* --------------------------------------------------------------------------
-   12. Keyframes
+   8. Keyframes
    -------------------------------------------------------------------------- */
 @keyframes fadeIn {
   from { opacity: 0; }
@@ -598,34 +406,12 @@ body {
   50% { opacity: 0.7; transform: scale(1.1); }
 }
 
-@keyframes skeletonShimmer {
-  0% { background-position: 100% 50%; }
-  100% { background-position: 0 50%; }
-}
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-
 /* --------------------------------------------------------------------------
-   13. Responsive Adjustments
+   9. Responsive Adjustments
    -------------------------------------------------------------------------- */
 @media (max-width: 640px) {
   .dashboard-wrapper {
     padding: 32px 16px 64px;
-  }
-
-  .summary-panel {
-    gap: 24px;
-    padding: 20px 16px;
-  }
-
-  .summary-value {
-    font-size: 1.75rem;
-  }
-
-  .metric {
-    font-size: 1.5rem;
   }
 
   .upload-zone {
@@ -646,7 +432,7 @@ body {
 }
 
 /* --------------------------------------------------------------------------
-   14. Reduced Motion
+   10. Reduced Motion
    -------------------------------------------------------------------------- */
 @media (prefers-reduced-motion: reduce) {
   * {
