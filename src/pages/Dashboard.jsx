@@ -127,7 +127,13 @@ function Dashboard() {
       setIsExporting(false);
     }
   };
-
+// Reset Function to clear memory and start fresh
+  const resetDashboard = () => {
+    setData(null);
+    setMlData(null);
+    sessionStorage.removeItem('dashboardData');
+    sessionStorage.removeItem('dashboardMlData');
+  };
   return (
     <div className="dashboard-wrapper">
       <header className="dashboard-header">
@@ -156,11 +162,26 @@ function Dashboard() {
         </div>
       )}
 
-      {/* The Download Button */}
-      {/* The Action Buttons (PDF & Raw Data) */}
+      
+     {/* The Action Buttons (Reset, Raw Data, PDF) */}
       {mlData && (
         <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '15px', marginTop: '20px' }}>
           
+          <button 
+            onClick={resetDashboard}
+            style={{
+              backgroundColor: 'transparent',
+              color: '#ff3d00',
+              padding: '12px 24px',
+              borderRadius: '8px',
+              border: '1px solid #ff3d00',
+              fontWeight: 'bold',
+              cursor: 'pointer',
+            }}
+          >
+            🔄 Reset
+          </button>
+
           <button 
             onClick={() => navigate('/data', { state: { data: data } })} 
             style={{
