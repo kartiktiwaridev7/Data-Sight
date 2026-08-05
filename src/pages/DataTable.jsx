@@ -4,9 +4,9 @@ import { useLocation, useNavigate } from 'react-router-dom';
 function DataTable() {
   const location = useLocation();
   const navigate = useNavigate();
-  
-  // This "catches" the data passed from the Dashboard
-  const data = location.state?.data;
+ 
+ // This grabs data passed from the Router, or falls back to the saved session storage!
+  const data = location.state?.data || JSON.parse(sessionStorage.getItem('dashboardData'));
 
   // If someone tries to visit this page directly without uploading first
   if (!data) {
