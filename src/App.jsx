@@ -1,4 +1,5 @@
 import DataTable from './pages/DataTable';
+import Home from './pages/Home';
 import { Routes, Route, Link } from 'react-router-dom';
 import { FiPieChart, FiCpu, FiUser } from 'react-icons/fi';
 import Dashboard from './pages/Dashboard';
@@ -13,7 +14,8 @@ function App() {
       <nav className="sidebar">
         <h2>DataSight</h2>
         <ul className="nav-links">
-          <li><Link to="/"><FiPieChart /> Dashboard</Link></li>
+          <li><Link to="/">Home</Link></li>
+          <li><Link to="/dashboard"><FiPieChart /> Dashboard</Link></li>
           <li><Link to="/about"><FiCpu /> Engine Overview</Link></li>
           <li><Link to="/developer"><FiUser /> About Developer</Link></li>
         </ul>
@@ -21,11 +23,12 @@ function App() {
 
       {/* Main Content Area */}
       <main className="content-area">
-        <Routes>
-          <Route path="/" element={<Dashboard />} />
+       <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/data" element={<DataTable />} />
           <Route path="/about" element={<About />} />
           <Route path="/developer" element={<Developer />} />
-          <Route path="/data" element={<DataTable />} />
         </Routes>
       </main>
     </div>
