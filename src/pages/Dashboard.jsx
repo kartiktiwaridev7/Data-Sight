@@ -9,9 +9,9 @@ import { useNavigate } from 'react-router-dom'; // Make sure you import this!
 function Dashboard() {
 
   // 1. Initialize State (null means no file uploaded yet)
-  const [data, setData] = useState(null);
-  // NEW: State to hold the Scikit-Learn prediction from Python
-  const [mlData, setMlData] = useState(null);
+ const [data, setData] = useState(() => JSON.parse(sessionStorage.getItem('dashboardData')) || null);
+  // NEW: State to hold the Scikit-Learn prediction from Python (with Session Storage)
+  const [mlData, setMlData] = useState(() => JSON.parse(sessionStorage.getItem('dashboardMlData')) || null);
   const [isLoading, setIsLoading] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
   const reportRef = useRef(null); 
@@ -41,7 +41,11 @@ function Dashboard() {
       setMlData(backendResult); 
       setData(parsedData); // Ensure charts get updated too
       
+      // NEW: Save to browser memory so it survives page navigation!
+      sessionStorage.setItem('dashboardMlData', JSON.stringify(backendResult));
+      sessionStorage.setItem('dashboardData', JSON.stringify(parsedData));
     } catch (error) {
+      
       console.error("Failed to connect to the predictive engine:", error);
       alert("Error processing data. Check console.");
     } finally {
