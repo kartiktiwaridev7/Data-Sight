@@ -180,7 +180,7 @@ function Dashboard() {
         </div>
       )}
 
-          <RevenueChart data={data} />
+         <RevenueChart data={data} mlData={mlData} />
         </>
         
       )}
