@@ -45,7 +45,7 @@ function Dashboard() {
       sessionStorage.setItem('dashboardMlData', JSON.stringify(backendResult));
       sessionStorage.setItem('dashboardData', JSON.stringify(parsedData));
     } catch (error) {
-      
+
       console.error("Failed to connect to the predictive engine:", error);
       alert("Error processing data. Check console.");
     } finally {
@@ -134,25 +134,27 @@ function Dashboard() {
         <h1>My Analytics Dashboard</h1>
       </header>
 
-      {/* The Upload Area */}
-      <div className="upload-zone" style={{ textAlign: 'center' }}>
-        <h3 style={{ color: '#ffffff', marginBottom: '10px' }}>Upload Dataset</h3>
-        {isLoading ? (
-          <div style={{ color: '#00d2ff', marginTop: '20px', fontWeight: 'bold', fontSize: '1.2rem' }}>
-            ⚙️ AI Engine is analyzing data...
-          </div>
-        ) : (
-          <label className="custom-file-upload">
-            <input
-              type="file"
-              accept=".json, .csv"
-              onChange={handleFileUpload}
-              style={{ display: 'none' }}
-            />
-            Select CSV Dataset
-          </label>
-        )}
-      </div>
+    {/* The Upload Area - Hides entirely once data is successfully loaded */}
+      {!data && (
+        <div className="upload-zone" style={{ textAlign: 'center' }}>
+          <h3 style={{ color: '#ffffff', marginBottom: '10px' }}>Upload Dataset</h3>
+          {isLoading ? (
+            <div style={{ color: '#00d2ff', marginTop: '20px', fontWeight: 'bold', fontSize: '1.2rem' }}>
+              ⚙️ AI Engine is analyzing data...
+            </div>
+          ) : (
+            <label className="custom-file-upload">
+              <input
+                type="file"
+                accept=".json, .csv"
+                onChange={handleFileUpload}
+                style={{ display: 'none' }}
+              />
+              Select CSV Dataset
+            </label>
+          )}
+        </div>
+      )}
 
       {/* The Download Button */}
       {/* The Action Buttons (PDF & Raw Data) */}
