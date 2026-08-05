@@ -1,6 +1,6 @@
-import React, { useState, useMemo } from 'react';
-import '../App.css';
-import StatCard from '../StatCard';
+import React, { useState, useRef } from 'react';
+import html2canvas from 'html2canvas';
+import { jsPDF } from 'jspdf';
 import TechBadge from '../TechBadge';
 import SummaryPanel from '../SummaryPanel';
 import Papa from 'papaparse';
@@ -13,7 +13,8 @@ function Dashboard() {
   // NEW: State to hold the Scikit-Learn prediction from Python
   const [mlData, setMlData] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-
+  const [isExporting, setIsExporting] = useState(false);
+  const reportRef = useRef(null); 
 
   // 2.We are adding The Multi-Format File Ingestion Engine
   const handleFileUpload = (event) => {
@@ -92,18 +93,46 @@ function Dashboard() {
     if (!data) return 0;
     return data.reduce((sum, day) => sum + day.users, 0);
   }, [data]);
+// PDF Generator Engine
+  const generatePDF = async () => {
+    if (!reportRef.current) return;
+    setIsExporting(true);
+
+    try {
+      // Take a high-res snapshot of the dashboard
+      const canvas = await html2canvas(reportRef.current, { 
+        backgroundColor: '#0f0f1a', 
+        scale: 2 
+      });
+      
+      const imgData = canvas.toDataURL('image/png');
+      
+      // Create PDF document
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+      
+      // Paste snapshot and download
+      pdf.addImage(imgData, 'PNG', 0, 10, pdfWidth, pdfHeight);
+      pdf.save('DataSight_Forecast_Report.pdf');
+      
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+      alert('Failed to generate PDF.');
+    } finally {
+      setIsExporting(false);
+    }
+  };
 
   return (
     <div className="dashboard-wrapper">
       <header className="dashboard-header">
         <h1>My Analytics Dashboard</h1>
+      </header>
 
-        {/* The Upload Input */}
-
-        <div className="upload-zone" style={{ textAlign: 'center' }}>
+      {/* The Upload Area */}
+      <div className="upload-zone" style={{ textAlign: 'center' }}>
         <h3 style={{ color: '#ffffff', marginBottom: '10px' }}>Upload Dataset</h3>
-        
-        {/* Hide the button while loading, show a thinking message instead */}
         {isLoading ? (
           <div style={{ color: '#00d2ff', marginTop: '20px', fontWeight: 'bold', fontSize: '1.2rem' }}>
             ⚙️ AI Engine is analyzing data...
@@ -121,69 +150,75 @@ function Dashboard() {
         )}
       </div>
 
-        {/* Render Summary and Badges ONLY if data exists */}
-        {data && (
-          <>
-           
-          </>
-        )}
-      </header>
-    {/* Render Chart and AI Prediction ONLY if data exists */}
-      {data && (
-        <>
-{/* NEW: Enterprise ML Metrics Grid */}
+      {/* The Download Button */}
       {mlData && (
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-          gap: '24px',
-          marginTop: '30px',
-          marginBottom: '30px'
-        }}>
-          
-          {/* Main Prediction Card */}
-          <div style={{ backgroundColor: '#161625', padding: '24px', borderRadius: '16px', border: '1px solid #2b2b45', textAlign: 'center', boxShadow: '0 8px 24px rgba(0,0,0,0.4)' }}>
-            <h3 style={{ color: '#00d2ff', margin: '0 0 10px 0' }}>Predicted Revenue</h3>
-            <p style={{ fontSize: '2.2rem', fontWeight: 'bold', margin: 0, color: '#ffffff' }}>
-              ${mlData.predicted_next_day_revenue}
-            </p>
-          </div>
-
-          {/* Confidence Interval Card */}
-          <div style={{ backgroundColor: '#161625', padding: '24px', borderRadius: '16px', border: '1px solid #2b2b45', textAlign: 'center' }}>
-            <h3 style={{ color: '#00d2ff', margin: '0 0 10px 0' }}>Expected Range</h3>
-            <p style={{ fontSize: '1.2rem', fontWeight: 'bold', margin: '15px 0 0 0', color: '#a0a0b5' }}>
-              ${mlData.prediction_lower_bound} - ${mlData.prediction_upper_bound}
-            </p>
-            <p style={{ fontSize: '0.85rem', color: '#6b6b85', marginTop: '8px' }}>Based on 95% confidence interval</p>
-          </div>
-
-          {/* Model Health Card */}
-          <div style={{ backgroundColor: '#161625', padding: '24px', borderRadius: '16px', border: '1px solid #2b2b45', textAlign: 'center' }}>
-            <h3 style={{ color: '#00d2ff', margin: '0 0 10px 0' }}>Model Health</h3>
-            
-            {/* Dynamic color changing based on backend confidence! */}
-            <p style={{ 
-              fontSize: '1.2rem', 
-              fontWeight: 'bold', 
-              margin: '15px 0 5px 0', 
-              color: mlData.model_confidence === 'high' ? '#00e676' : mlData.model_confidence === 'medium' ? '#ffea00' : '#ff3d00' 
-            }}>
-              {mlData.model_confidence.toUpperCase()} CONFIDENCE
-            </p>
-            
-            <p style={{ fontSize: '0.9rem', color: '#a0a0b5', margin: 0 }}>
-              Accuracy Score (R²): {mlData.model_r2}
-            </p>
-          </div>
-
+        <div style={{ textAlign: 'right', marginTop: '20px' }}>
+          <button 
+            onClick={generatePDF} 
+            disabled={isExporting}
+            style={{
+              backgroundColor: isExporting ? '#2b2b45' : '#00d2ff',
+              color: isExporting ? '#a0a0b5' : '#000',
+              padding: '12px 24px',
+              borderRadius: '8px',
+              border: 'none',
+              fontWeight: 'bold',
+              cursor: isExporting ? 'not-allowed' : 'pointer',
+              boxShadow: '0 4px 12px rgba(0, 210, 255, 0.3)'
+            }}
+          >
+            {isExporting ? '📸 Generating PDF...' : '📥 Download PDF Report'}
+          </button>
         </div>
       )}
 
-         <RevenueChart data={data} mlData={mlData} />
-        </>
+      {/* The PDF Target Zone - Everything in here gets exported! */}
+      <div ref={reportRef} style={{ padding: '10px' }}>
         
-      )}
+        {/* Enterprise ML Metrics Grid */}
+        {mlData && (
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+            gap: '24px',
+            marginTop: '30px',
+            marginBottom: '30px'
+          }}>
+            <div style={{ backgroundColor: '#161625', padding: '24px', borderRadius: '16px', border: '1px solid #2b2b45', textAlign: 'center', boxShadow: '0 8px 24px rgba(0,0,0,0.4)' }}>
+              <h3 style={{ color: '#00d2ff', margin: '0 0 10px 0' }}>Predicted Revenue</h3>
+              <p style={{ fontSize: '2.2rem', fontWeight: 'bold', margin: 0, color: '#ffffff' }}>
+                ${mlData.predicted_next_day_revenue}
+              </p>
+            </div>
+
+            <div style={{ backgroundColor: '#161625', padding: '24px', borderRadius: '16px', border: '1px solid #2b2b45', textAlign: 'center' }}>
+              <h3 style={{ color: '#00d2ff', margin: '0 0 10px 0' }}>Expected Range</h3>
+              <p style={{ fontSize: '1.2rem', fontWeight: 'bold', margin: '15px 0 0 0', color: '#a0a0b5' }}>
+                ${mlData.prediction_lower_bound} - ${mlData.prediction_upper_bound}
+              </p>
+              <p style={{ fontSize: '0.85rem', color: '#6b6b85', margin: '8px 0 0 0' }}>Based on 95% confidence interval</p>
+            </div>
+
+            <div style={{ backgroundColor: '#161625', padding: '24px', borderRadius: '16px', border: '1px solid #2b2b45', textAlign: 'center' }}>
+              <h3 style={{ color: '#00d2ff', margin: '0 0 10px 0' }}>Model Health</h3>
+              <p style={{ 
+                fontSize: '1.2rem', 
+                fontWeight: 'bold', 
+                margin: '15px 0 5px 0', 
+                color: mlData.model_confidence === 'high' ? '#00e676' : mlData.model_confidence === 'medium' ? '#ffea00' : '#ff3d00' 
+              }}>
+                {mlData.model_confidence.toUpperCase()} CONFIDENCE
+              </p>
+              <p style={{ fontSize: '0.9rem', color: '#a0a0b5', margin: 0 }}>
+                Accuracy Score (R²): {mlData.model_r2}
+              </p>
+            </div>
+          </div>
+        )}
+
+        <RevenueChart data={data} mlData={mlData} />
+      </div>
+      
     </div>
   );
 }
