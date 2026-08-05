@@ -1,3 +1,4 @@
+import DataTable from './pages/DataTable';
 import { Routes, Route, Link } from 'react-router-dom';
 import { FiPieChart, FiCpu, FiUser } from 'react-icons/fi';
 import Dashboard from './pages/Dashboard';
@@ -24,6 +25,7 @@ function App() {
           <Route path="/" element={<Dashboard />} />
           <Route path="/about" element={<About />} />
           <Route path="/developer" element={<Developer />} />
+          <Route path="/data" element={<DataTable />} />
         </Routes>
       </main>
     </div>

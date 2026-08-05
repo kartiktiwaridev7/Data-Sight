@@ -5,7 +5,7 @@ import TechBadge from '../TechBadge';
 import SummaryPanel from '../SummaryPanel';
 import Papa from 'papaparse';
 import RevenueChart from '../RevenueChart';
-
+import { useNavigate } from 'react-router-dom'; // Make sure you import this!
 function Dashboard() {
 
   // 1. Initialize State (null means no file uploaded yet)
@@ -15,7 +15,7 @@ function Dashboard() {
   const [isLoading, setIsLoading] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
   const reportRef = useRef(null); 
-
+  const navigate = useNavigate();
   // 2.We are adding The Multi-Format File Ingestion Engine
   const handleFileUpload = (event) => {
     const file = event.target.files[0];
@@ -151,8 +151,25 @@ function Dashboard() {
       </div>
 
       {/* The Download Button */}
+      {/* The Action Buttons (PDF & Raw Data) */}
       {mlData && (
-        <div style={{ textAlign: 'right', marginTop: '20px' }}>
+        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '15px', marginTop: '20px' }}>
+          
+          <button 
+            onClick={() => navigate('/data', { state: { data: data } })} 
+            style={{
+              backgroundColor: '#161625',
+              color: '#00d2ff',
+              padding: '12px 24px',
+              borderRadius: '8px',
+              border: '1px solid #00d2ff',
+              fontWeight: 'bold',
+              cursor: 'pointer',
+            }}
+          >
+            📊 View Raw Data
+          </button>
+
           <button 
             onClick={generatePDF} 
             disabled={isExporting}
