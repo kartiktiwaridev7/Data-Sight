@@ -70,16 +70,11 @@ function Dashboard() {
       setIsLoading(false);
     }
   };
-  // 3. Update Aggregates (Safeguard against null data)
-  const totalRevenue = useMemo(() => {
-    if (!data) return 0;
-    return data.reduce((sum, day) => sum + day.revenue, 0);
-  }, [data]);
+  
+  // 3. Update Aggregates (Pulled directly from the Python AI Engine!)
+  const totalRevenue = mlData?.computed_total_revenue || 0;
+  const totalUsers = mlData?.computed_average_users || 0;
 
-  const totalUsers = useMemo(() => {
-    if (!data) return 0;
-    return data.reduce((sum, day) => sum + day.users, 0);
-  }, [data]);
 // PDF Generator Engine
   const generatePDF = async () => {
     if (!reportRef.current) return;
