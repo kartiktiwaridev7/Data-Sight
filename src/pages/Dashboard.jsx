@@ -1,5 +1,3 @@
-const [errorMessage, setErrorMessage] = useState(null);
-const [processingTime, setProcessingTime] = useState(null);
 import React, { useState, useRef, useMemo } from 'react';
 import html2canvas from 'html2canvas';
 import { jsPDF } from 'jspdf';
@@ -8,8 +6,10 @@ import SummaryPanel from '../SummaryPanel';
 import Papa from 'papaparse';
 import RevenueChart from '../RevenueChart';
 import { useNavigate } from 'react-router-dom'; // Make sure you import this!
-function Dashboard() {
 
+function Dashboard() {
+const [errorMessage, setErrorMessage] = useState(null);
+const [processingTime, setProcessingTime] = useState(null);
   // 1. Initialize State (null means no file uploaded yet)
  const [data, setData] = useState(() => JSON.parse(sessionStorage.getItem('dashboardData')) || null);
   // NEW: State to hold the Scikit-Learn prediction from Python (with Session Storage)
