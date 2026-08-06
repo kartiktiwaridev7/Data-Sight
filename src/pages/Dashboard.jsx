@@ -118,6 +118,36 @@ function Dashboard() {
         <h1>My Analytics Dashboard</h1>
       </header>
 
+
+      {/* NEW: Error Alert Box */}
+      {errorMessage && (
+        <div style={{ 
+          backgroundColor: 'rgba(255, 61, 0, 0.1)', 
+          border: '1px solid #ff3d00', 
+          color: '#ff3d00', 
+          padding: '15px', 
+          borderRadius: '8px', 
+          marginBottom: '20px', 
+          textAlign: 'center', 
+          fontWeight: 'bold' 
+        }}>
+          ⚠️ {errorMessage}
+        </div>
+      )}
+
+      {/* NEW: AI Speed Timer Badge */}
+      {processingTime && (
+        <div style={{ 
+          textAlign: 'right', 
+          color: '#00ff80', 
+          fontSize: '0.9rem', 
+          marginBottom: '15px', 
+          fontWeight: 'bold' 
+        }}>
+          ⚡ AI Engine Processed in: {processingTime}s
+        </div>
+      )}
+
     {/* The Upload Area - Hides entirely once data is successfully loaded */}
       {!data && (
         <div className="upload-zone" style={{ textAlign: 'center' }}>
