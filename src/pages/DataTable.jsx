@@ -1,69 +1,98 @@
-import React from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';
 
-function DataTable() {
-  const location = useLocation();
-  const navigate = useNavigate();
- 
- // This grabs data passed from the Router, or falls back to the saved session storage!
-  const data = location.state?.data || JSON.parse(sessionStorage.getItem('dashboardData'));
+function DataTable({ data }) {
+  const [currentPage, setCurrentPage] = useState(1);
+  const rowsPerPage = 100;
 
-  // If someone tries to visit this page directly without uploading first
-  if (!data) {
+  if (!data || data.length === 0) {
     return (
-      <div style={{ textAlign: 'center', marginTop: '50px', color: '#ffffff' }}>
-        <h2>No data found!</h2>
-        <p style={{ color: '#a0a0b5' }}>Please upload a CSV on the Dashboard first.</p>
-        <button 
-          onClick={() => navigate('/')}
-          style={{ padding: '10px 20px', marginTop: '20px', backgroundColor: '#00d2ff', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold' }}
-        >
-          Go Back to Dashboard
-        </button>
+      <div style={{ padding: '20px', color: '#a0a0b5', textAlign: 'center' }}>
+        No raw data available. Please upload a dataset on the Dashboard.
       </div>
     );
   }
 
+  // Pagination Logic
+  const indexOfLastRow = currentPage * rowsPerPage;
+  const indexOfFirstRow = indexOfLastRow - rowsPerPage;
+  const currentRows = data.slice(indexOfFirstRow, indexOfLastRow);
+  const totalPages = Math.ceil(data.length / rowsPerPage);
+
+  const handleNext = () => {
+    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+  };
+
+  const handlePrev = () => {
+    if (currentPage > 1) setCurrentPage(currentPage - 1);
+  };
+
   return (
-    <div style={{ padding: '20px', maxWidth: '1000px', margin: '0 auto' }}>
-      
-      {/* Header and Back Button */}
+    <div style={{ padding: '20px', color: '#ffffff', maxWidth: '100%' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-        <h2 style={{ color: '#ffffff', margin: 0 }}>Raw Dataset ({data.length} Rows)</h2>
-        <button 
-          onClick={() => navigate(-1)} // Takes them exactly back to where they were
-          style={{ backgroundColor: '#2b2b45', color: '#ffffff', border: '1px solid #00d2ff', padding: '8px 16px', borderRadius: '8px', cursor: 'pointer' }}
-        >
-          ← Back to Dashboard
-        </button>
+        <h2 style={{ margin: 0, color: '#00d2ff' }}>Raw Data Viewer</h2>
+        <div style={{ color: '#a0a0b5', fontSize: '0.9rem' }}>
+          Showing {indexOfFirstRow + 1} to {Math.min(indexOfLastRow, data.length)} of {data.length} rows
+        </div>
       </div>
 
-      {/* The Scrollable Dark Theme Table */}
-      <div style={{ 
-        backgroundColor: '#161625', 
-        borderRadius: '16px', 
-        border: '1px solid #2b2b45',
-        maxHeight: '70vh', // Keeps it scrollable
-        overflowY: 'auto'
-      }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse', color: '#ffffff', textAlign: 'left' }}>
-          <thead style={{ position: 'sticky', top: 0, backgroundColor: '#0f0f1a', borderBottom: '2px solid #2b2b45' }}>
-            <tr>
-              <th style={{ padding: '15px', color: '#00d2ff' }}>Date</th>
-              <th style={{ padding: '15px', color: '#00d2ff' }}>Revenue ($)</th>
-              <th style={{ padding: '15px', color: '#00d2ff' }}>Active Users</th>
+      <div style={{ overflowX: 'auto', backgroundColor: '#161625', borderRadius: '8px', border: '1px solid #2b2b45' }}>
+        <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+          <thead>
+            <tr style={{ backgroundColor: '#1c1c28', borderBottom: '2px solid #2b2b45' }}>
+              <th style={{ padding: '12px 15px', color: '#00d2ff' }}>Date</th>
+              <th style={{ padding: '12px 15px', color: '#00d2ff' }}>Users</th>
+              <th style={{ padding: '12px 15px', color: '#00d2ff' }}>Revenue</th>
             </tr>
           </thead>
           <tbody>
-            {data.map((row, index) => (
+            {currentRows.map((row, index) => (
               <tr key={index} style={{ borderBottom: '1px solid #2b2b45' }}>
-                <td style={{ padding: '12px 15px', color: '#a0a0b5' }}>{row.date}</td>
-                <td style={{ padding: '12px 15px', fontWeight: 'bold' }}>{row.revenue}</td>
-                <td style={{ padding: '12px 15px' }}>{row.users}</td>
+                <td style={{ padding: '10px 15px', color: '#e0e0e0' }}>{row.date || row.Date}</td>
+                <td style={{ padding: '10px 15px', color: '#e0e0e0' }}>{row.users || row.Users}</td>
+                <td style={{ padding: '10px 15px', color: '#e0e0e0' }}>
+                  {row.revenue ? `$${Number(row.revenue).toFixed(2)}` : (row.Revenue ? `$${Number(row.Revenue).toFixed(2)}` : 'N/A')}
+                </td>
               </tr>
             ))}
           </tbody>
         </table>
+      </div>
+
+      {/* Pagination Controls */}
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '20px', gap: '15px' }}>
+        <button 
+          onClick={handlePrev} 
+          disabled={currentPage === 1}
+          style={{ 
+            padding: '8px 16px', 
+            backgroundColor: currentPage === 1 ? '#2b2b45' : '#00d2ff', 
+            color: currentPage === 1 ? '#a0a0b5' : '#000',
+            border: 'none', 
+            borderRadius: '4px', 
+            cursor: currentPage === 1 ? 'not-allowed' : 'pointer',
+            fontWeight: 'bold'
+          }}
+        >
+          Previous
+        </button>
+        <span style={{ color: '#a0a0b5' }}>
+          Page {currentPage} of {totalPages}
+        </span>
+        <button 
+          onClick={handleNext} 
+          disabled={currentPage === totalPages}
+          style={{ 
+            padding: '8px 16px', 
+            backgroundColor: currentPage === totalPages ? '#2b2b45' : '#00d2ff', 
+            color: currentPage === totalPages ? '#a0a0b5' : '#000',
+            border: 'none', 
+            borderRadius: '4px', 
+            cursor: currentPage === totalPages ? 'not-allowed' : 'pointer',
+            fontWeight: 'bold'
+          }}
+        >
+          Next
+        </button>
       </div>
     </div>
   );
