@@ -19,74 +19,55 @@ function Dashboard() {
   const reportRef = useRef(null); 
   const navigate = useNavigate();
   // 2.We are adding The Multi-Format File Ingestion Engine
-  const handleFileUpload = (event) => {
+
+    const handleFileUpload = async (event) => {
     const file = event.target.files[0];
     if (!file) return;
 
-    // Grab the file extension (json or csv)
-    const fileExtension = file.name.split('.').pop().toLowerCase();
+    // Reset previous states
+    setIsLoading(true);
+    setErrorMessage(null);
+    setProcessingTime(null);
 
-    // Helper function to send processed data to the Python Backend
-  const processAndSendData = async (parsedData) => {
-    setIsLoading(true); // 1. AI starts thinking
+    // ⏱️ Start the performance timer
+    const startTime = performance.now();
 
     try {
-      const response = await fetch("http://127.0.0.1:8000/analyze", {
+      // 1. Pack the raw file into a FormData object (Bypasses JSON parsing completely)
+      const formData = new FormData();
+      formData.append("file", file);
+
+      // 2. Send directly to your new heavy-duty backend endpoint
+      const response = await fetch("http://localhost:8000/analyze/upload", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(parsedData),
+        body: formData,
+        // Note: NEVER set 'Content-Type' manually when using FormData. 
+        // The browser handles the multipart boundary automatically.
       });
 
-      if (!response.ok) throw new Error("Network response was not ok");
+      const result = await response.json();
+
+      // 3. Handle FastAPI's specific error messages gracefully
+      if (!response.ok) {
+        throw new Error(result.detail || "An error occurred during analysis.");
+      }
+
+      // ⏱️ Stop the timer
+      const endTime = performance.now();
+      const timeTaken = ((endTime - startTime) / 1000).toFixed(2); // Convert to seconds
+
+      // 4. Update the UI with the ML predictions and the speed metric
+      setProcessingTime(timeTaken);
+      setMlData(result);
       
-      const backendResult = await response.json(); 
-      setMlData(backendResult); 
-      setData(parsedData); // Ensure charts get updated too
-      
-      // NEW: Save to browser memory so it survives page navigation!
-      sessionStorage.setItem('dashboardMlData', JSON.stringify(backendResult));
-      sessionStorage.setItem('dashboardData', JSON.stringify(parsedData));
+      // Note: If you still need the raw 'data' state for your DataTable preview, 
+      // you can keep your existing PapaParse logic here, but limit it to the first 100 rows!
+
     } catch (error) {
-
-      console.error("Failed to connect to the predictive engine:", error);
-      alert("Error processing data. Check console.");
+      console.error("Upload failed:", error);
+      setErrorMessage(error.message);
     } finally {
-      setIsLoading(false); // 2. AI is done, turn off loading state
-    }
-  };
-
-    // Route 1: Handle JSON Files
-    if (fileExtension === 'json') {
-      const reader = new FileReader();
-      reader.onload = async (e) => {
-        try {
-          const json = JSON.parse(e.target.result);
-          await processAndSendData(json);
-        } catch (error) {
-          alert("Error: Please upload a valid JSON file.");
-        }
-      };
-      reader.readAsText(file);
-    } 
-    // Route 2: Handle CSV Files using Papa Parse
-    
-     // Route 2: Handle CSV Files using Papa Parse
-    else if (fileExtension === 'csv') {
-      Papa.parse(file, {
-        header: true, // Tells the parser the first row contains the column names
-        dynamicTyping: true, // MAGIC FEATURE: Automatically converts string numbers into real math numbers
-        skipEmptyLines: true, // MAGIC FIX 1: Ignores trailing blank lines at the bottom of the CSV
-        transformHeader: (header) => header.trim(), // MAGIC FIX 2: Removes accidental spaces in column names
-        complete: async (results) => {
-          // results.data contains the perfectly formatted JSON array
-          await processAndSendData(results.data);
-        },
-        error: (error) => {
-          alert("Error parsing CSV file:", error);
-        }
-     });
-    } else {
-      alert("Please upload a .json or .csv file");
+      setIsLoading(false);
     }
   };
   // 3. Update Aggregates (Safeguard against null data)
