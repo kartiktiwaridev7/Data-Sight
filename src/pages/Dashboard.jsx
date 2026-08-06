@@ -59,9 +59,23 @@ const [processingTime, setProcessingTime] = useState(null);
       // 4. Update the UI with the ML predictions and the speed metric
       setProcessingTime(timeTaken);
       setMlData(result);
+    
+// 5. THE FIX: Give the frontend a lightweight preview for the chart!
+      Papa.parse(file, {
+        header: true,
+        dynamicTyping: true,
+        skipEmptyLines: true,
+        preview: 150, // 🔥 MAGIC FIX: Only loads the first 150 rows into React memory!
+        transformHeader: (header) => header.trim(),
+        complete: (results) => {
+          setData(results.data);
+          
+          // Optional: Save to session storage so it survives page reloads
+          sessionStorage.setItem('dashboardData', JSON.stringify(results.data));
+          sessionStorage.setItem('dashboardMlData', JSON.stringify(result));
+        }
+      });
       
-      // Note: If you still need the raw 'data' state for your DataTable preview, 
-      // you can keep your existing PapaParse logic here, but limit it to the first 100 rows!
 
     } catch (error) {
       console.error("Upload failed:", error);

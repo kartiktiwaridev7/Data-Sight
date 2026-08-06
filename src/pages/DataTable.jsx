@@ -1,8 +1,13 @@
 import React, { useState } from 'react';
 
-function DataTable({ data }) {
+function DataTable({ data: propData }) {
   const [currentPage, setCurrentPage] = useState(1);
   const rowsPerPage = 100;
+
+  // 🚀 INDUSTRY FIX: State Recovery
+  // If the React Router drops the prop during navigation, pull it directly from browser memory.
+  const rawSessionData = sessionStorage.getItem('dashboardData');
+  const data = propData || (rawSessionData ? JSON.parse(rawSessionData) : null);
 
   if (!data || data.length === 0) {
     return (
