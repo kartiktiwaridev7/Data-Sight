@@ -1,3 +1,5 @@
+const [errorMessage, setErrorMessage] = useState(null);
+const [processingTime, setProcessingTime] = useState(null);
 import React, { useState, useRef, useMemo } from 'react';
 import html2canvas from 'html2canvas';
 import { jsPDF } from 'jspdf';
