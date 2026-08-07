@@ -77,9 +77,9 @@ function Developer() {
           </p>
           
           <p>
-            Curretly I am doing freelnce projects and I love to connect with you If You are intrested in M.l and create a bridge b/w Machine learning model
-            and frontend applications that solves real world problem and you can find me through my link-din and connect with trough 
-            my Portfolio . 
+           "Currently, I am doing freelance projects and I would love to connect with you.
+            If you are interested in ML and creating a bridge between machine learning models and frontend applications 
+            that solve real-world problems, you can find me on LinkedIn or connect through my portfolio." 
             </p>
           
           <p>
