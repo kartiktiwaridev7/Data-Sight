@@ -40,16 +40,16 @@ function EngineOverview() {
   };
 
   return (
-    <div style={containerStyle}>
-      <h1 style={headerStyle}>How DataSight Works</h1>
-      <p style={{ color: '#a0a0b5', fontSize: '1.1rem', lineHeight: '1.6', maxWidth: '800px' }}>
+    <div style={containerStyle} className="eo-container">
+      <h1 style={headerStyle} className="eo-fade-in eo-delay-1">How DataSight Works</h1>
+      <p className="eo-fade-in eo-delay-2" style={{ color: '#a0a0b5', fontSize: '1.1rem', lineHeight: '1.6', maxWidth: '800px' }}>
         DataSight connects a fast, modern website with a smart Artificial Intelligence engine behind the scenes. 
         It is built to take in messy, unpredictable data and turn it into clear, accurate predictions in the blink of an eye.
       </p>
 
       <div style={gridStyle}>
         {/* Frontend Card */}
-        <div style={cardStyle} className="hover-card">
+        <div style={cardStyle} className="hover-card eo-card eo-fade-in eo-delay-3">
           {/* <div style={iconStyle}>⚡</div> */}
           <h3 style={{ color: '#00d2ff', marginBottom: '10px' }}>Fast & Smooth Uploads</h3>
           <p style={{ color: '#a0a0b5', fontSize: '0.95rem', lineHeight: '1.5' }}>
@@ -60,7 +60,7 @@ function EngineOverview() {
         </div>
 
         {/* Backend Card */}
-        <div style={cardStyle} className="hover-card">
+        <div style={cardStyle} className="hover-card eo-card eo-fade-in eo-delay-4">
           {/* <div style={iconStyle}>🧠</div> */}
           <h3 style={{ color: '#00d2ff', marginBottom: '10px' }}>Smart Data Reading</h3>
           <p style={{ color: '#a0a0b5', fontSize: '0.95rem', lineHeight: '1.5' }}>
@@ -71,7 +71,7 @@ function EngineOverview() {
         </div>
 
         {/* ML Card */}
-        <div style={cardStyle} className="hover-card">
+        <div style={cardStyle} className="hover-card eo-card eo-fade-in eo-delay-5">
           {/* <div style={iconStyle}>📈</div> */}
           <h3 style={{ color: '#00d2ff', marginBottom: '10px' }}>Connecting the Dots</h3>
           <p style={{ color: '#a0a0b5', fontSize: '0.95rem', lineHeight: '1.5' }}>
@@ -82,7 +82,7 @@ function EngineOverview() {
         </div>
 
         {/* UI/State Card */}
-        <div style={cardStyle} className="hover-card">
+        <div style={cardStyle} className="hover-card eo-card eo-fade-in eo-delay-6">
           {/* <div style={iconStyle}>💾</div> */}
           <h3 style={{ color: '#00d2ff', marginBottom: '10px' }}>Seamless Experience</h3>
           <p style={{ color: '#a0a0b5', fontSize: '0.95rem', lineHeight: '1.5' }}>
@@ -96,9 +96,93 @@ function EngineOverview() {
       {/* Optional simple CSS for the hover effect embedded safely */}
       <style>
         {`
+          @keyframes eoFadeInUp {
+            from {
+              opacity: 0;
+              transform: translateY(16px);
+            }
+            to {
+              opacity: 1;
+              transform: translateY(0);
+            }
+          }
+
+          @keyframes eoHeaderShimmer {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 200% 50%; }
+          }
+
+          @keyframes eoShine {
+            from { transform: translateX(-120%) skewX(-15deg); }
+            to { transform: translateX(220%) skewX(-15deg); }
+          }
+
+          .eo-container {
+            animation: eoFadeInUp 0.5s ease-out both;
+          }
+
+          .eo-fade-in {
+            opacity: 0;
+            animation: eoFadeInUp 0.55s ease-out both;
+          }
+
+          .eo-delay-1 { animation-delay: 0.1s; }
+          .eo-delay-2 { animation-delay: 0.18s; }
+          .eo-delay-3 { animation-delay: 0.26s; }
+          .eo-delay-4 { animation-delay: 0.34s; }
+          .eo-delay-5 { animation-delay: 0.42s; }
+          .eo-delay-6 { animation-delay: 0.5s; }
+
+          h1 {
+            background-size: 200% auto;
+            animation: eoFadeInUp 0.55s ease-out both, eoHeaderShimmer 6s linear infinite 0.7s;
+          }
+
+          .eo-card {
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+          }
+
+          .eo-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 45%;
+            height: 100%;
+            background: linear-gradient(120deg, transparent, rgba(0, 210, 255, 0.08), transparent);
+            transform: translateX(-120%) skewX(-15deg);
+            pointer-events: none;
+          }
+
           .hover-card:hover {
             transform: translateY(-5px);
             border-color: #00d2ff !important;
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(0, 210, 255, 0.1);
+          }
+
+          .eo-card:hover::before {
+            animation: eoShine 0.8s ease forwards;
+          }
+
+          .eo-card h3 {
+            transition: transform 0.25s ease;
+          }
+
+          .eo-card:hover h3 {
+            transform: translateX(3px);
+          }
+
+          @media (prefers-reduced-motion: reduce) {
+            .eo-container,
+            .eo-fade-in,
+            h1,
+            .eo-card::before {
+              animation: none !important;
+              opacity: 1 !important;
+              transform: none !important;
+            }
           }
         `}
       </style>
