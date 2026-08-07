@@ -6,7 +6,7 @@ import './index.css'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <BrowserRouter basename="/Data-Sight">
+ <BrowserRouter>
       <App />
     </BrowserRouter>
   </React.StrictMode>,
