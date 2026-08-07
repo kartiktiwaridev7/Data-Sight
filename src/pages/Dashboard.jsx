@@ -112,46 +112,191 @@ function Dashboard() {
 
   return (
     <div className="dashboard-wrapper">
-      <header className="dashboard-header">
+      {/* Scoped animation styles — colors untouched, purely motion/structure */}
+      <style>{`
+        @keyframes ds-fadeInDown {
+          from { opacity: 0; transform: translateY(-14px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes ds-fadeInUp {
+          from { opacity: 0; transform: translateY(18px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes ds-fadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        @keyframes ds-scaleIn {
+          from { opacity: 0; transform: scale(0.94); }
+          to { opacity: 1; transform: scale(1); }
+        }
+        @keyframes ds-shake {
+          10%, 90% { transform: translateX(-1px); }
+          20%, 80% { transform: translateX(2px); }
+          30%, 50%, 70% { transform: translateX(-4px); }
+          40%, 60% { transform: translateX(4px); }
+        }
+        @keyframes ds-spin {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+        @keyframes ds-pulseGlow {
+          0%, 100% { box-shadow: 0 0 0 0 rgba(0, 210, 255, 0.35); }
+          50% { box-shadow: 0 0 0 10px rgba(0, 210, 255, 0); }
+        }
+        @keyframes ds-shimmer {
+          0% { background-position: -200% 0; }
+          100% { background-position: 200% 0; }
+        }
+        @keyframes ds-dash {
+          from { stroke-dashoffset: 24; }
+          to { stroke-dashoffset: 0; }
+        }
+
+        .ds-header {
+          animation: ds-fadeInDown 0.55s ease both;
+        }
+        .ds-error {
+          animation: ds-shake 0.5s ease, ds-fadeIn 0.3s ease both;
+        }
+        .ds-processing-time {
+          animation: ds-fadeIn 0.5s ease both;
+        }
+        .ds-upload-zone {
+          animation: ds-scaleIn 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+          transition: border-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .ds-upload-zone:hover {
+          transform: translateY(-2px);
+        }
+        .ds-loading-text {
+          animation: ds-fadeIn 0.4s ease both;
+        }
+        .ds-spinner {
+          display: inline-block;
+          animation: ds-spin 1s linear infinite;
+        }
+        .ds-file-label {
+          display: inline-block;
+          transition: transform 0.25s ease, box-shadow 0.25s ease, filter 0.25s ease;
+        }
+        .ds-file-label:hover {
+          transform: translateY(-3px) scale(1.03);
+          filter: brightness(1.08);
+        }
+        .ds-file-label:active {
+          transform: translateY(-1px) scale(0.99);
+        }
+
+        .ds-toolbar {
+          animation: ds-fadeInDown 0.45s ease both;
+        }
+        .ds-btn {
+          transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease, background-color 0.2s ease;
+          will-change: transform;
+        }
+        .ds-btn:hover:not(:disabled) {
+          transform: translateY(-3px);
+          filter: brightness(1.1);
+        }
+        .ds-btn:active:not(:disabled) {
+          transform: translateY(-1px) scale(0.97);
+        }
+        .ds-btn-primary:not(:disabled) {
+          animation: ds-pulseGlow 2.4s ease-in-out infinite;
+        }
+        .ds-btn-exporting {
+          animation: none !important;
+        }
+
+        .ds-stats-grid {
+          animation: ds-fadeIn 0.3s ease both;
+        }
+        .ds-stat-card {
+          animation: ds-fadeInUp 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+          transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+        }
+        .ds-stat-card:hover {
+          transform: translateY(-6px);
+          box-shadow: 0 14px 30px rgba(0, 210, 255, 0.15);
+          border-color: #00d2ff;
+        }
+        .ds-stat-card:nth-child(1) { animation-delay: 0.05s; }
+        .ds-stat-card:nth-child(2) { animation-delay: 0.15s; }
+        .ds-stat-card:nth-child(3) { animation-delay: 0.25s; }
+
+        .ds-stat-value {
+          transition: text-shadow 0.3s ease;
+        }
+        .ds-stat-card:hover .ds-stat-value {
+          text-shadow: 0 0 18px rgba(0, 210, 255, 0.35);
+        }
+
+        .ds-chart-section {
+          animation: ds-fadeInUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+          animation-delay: 0.3s;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .ds-header, .ds-error, .ds-processing-time, .ds-upload-zone,
+          .ds-loading-text, .ds-spinner, .ds-file-label, .ds-toolbar,
+          .ds-btn, .ds-btn-primary, .ds-stats-grid, .ds-stat-card,
+          .ds-stat-value, .ds-chart-section {
+            animation: none !important;
+            transition: none !important;
+          }
+        }
+      `}</style>
+
+      <header className="dashboard-header ds-header">
         <h1>My Analytics Dashboard</h1>
       </header>
 
       {errorMessage && (
-        <div style={{
-          backgroundColor: 'rgba(255, 61, 0, 0.1)',
-          border: '1px solid #ff3d00',
-          color: '#ff3d00',
-          padding: '15px',
-          borderRadius: '8px',
-          marginBottom: '20px',
-          textAlign: 'center',
-          fontWeight: 'bold'
-        }}>
+        <div
+          className="ds-error"
+          style={{
+            backgroundColor: 'rgba(255, 61, 0, 0.1)',
+            border: '1px solid #ff3d00',
+            color: '#ff3d00',
+            padding: '15px',
+            borderRadius: '8px',
+            marginBottom: '20px',
+            textAlign: 'center',
+            fontWeight: 'bold'
+          }}
+        >
           ⚠️ {errorMessage}
         </div>
       )}
 
       {processingTime && (
-        <div style={{
-          textAlign: 'right',
-          color: '#00ff80',
-          fontSize: '0.9rem',
-          marginBottom: '15px',
-          fontWeight: 'bold'
-        }}>
+        <div
+          className="ds-processing-time"
+          style={{
+            textAlign: 'right',
+            color: '#00ff80',
+            fontSize: '0.9rem',
+            marginBottom: '15px',
+            fontWeight: 'bold'
+          }}
+        >
           ⚡ AI Engine Processed in: {processingTime}s
         </div>
       )}
 
       {!data && (
-        <div className="upload-zone" style={{ textAlign: 'center' }}>
+        <div className="upload-zone ds-upload-zone" style={{ textAlign: 'center' }}>
           <h3 style={{ color: '#ffffff', marginBottom: '10px' }}>Upload Dataset</h3>
           {isLoading ? (
-            <div style={{ color: '#00d2ff', marginTop: '20px', fontWeight: 'bold', fontSize: '1.2rem' }}>
-              ⚙️ AI Engine is analyzing data...
+            <div
+              className="ds-loading-text"
+              style={{ color: '#00d2ff', marginTop: '20px', fontWeight: 'bold', fontSize: '1.2rem' }}
+            >
+              <span className="ds-spinner">⚙️</span> AI Engine is analyzing data...
             </div>
           ) : (
-            <label className="custom-file-upload">
+            <label className="custom-file-upload ds-file-label">
               <input
                 type="file"
                 accept=".json, .csv"
@@ -165,10 +310,11 @@ function Dashboard() {
       )}
 
       {mlData && (
-        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '15px', marginTop: '20px' }}>
+        <div className="ds-toolbar" style={{ display: 'flex', justifyContent: 'flex-end', gap: '15px', marginTop: '20px' }}>
 
           <button
             onClick={resetDashboard}
+            className="ds-btn"
             style={{
               backgroundColor: 'transparent',
               color: '#ff3d00',
@@ -184,6 +330,7 @@ function Dashboard() {
 
           <button
             onClick={() => navigate('/data', { state: { data: data } })}
+            className="ds-btn"
             style={{
               backgroundColor: '#161625',
               color: '#00d2ff',
@@ -200,6 +347,7 @@ function Dashboard() {
           <button
             onClick={generatePDF}
             disabled={isExporting}
+            className={`ds-btn ${isExporting ? 'ds-btn-exporting' : 'ds-btn-primary'}`}
             style={{
               backgroundColor: isExporting ? '#2b2b45' : '#00d2ff',
               color: isExporting ? '#a0a0b5' : '#000',
@@ -211,7 +359,13 @@ function Dashboard() {
               boxShadow: '0 4px 12px rgba(0, 210, 255, 0.3)'
             }}
           >
-            {isExporting ? '📸 Generating PDF...' : '📥 Download PDF Report'}
+            {isExporting ? (
+              <>
+                <span className="ds-spinner" style={{ display: 'inline-block' }}>📸</span> Generating PDF...
+              </>
+            ) : (
+              '📥 Download PDF Report'
+            )}
           </button>
         </div>
       )}
@@ -219,31 +373,34 @@ function Dashboard() {
       <div ref={reportRef} style={{ padding: '10px' }}>
 
         {mlData && (
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-            gap: '24px',
-            marginTop: '30px',
-            marginBottom: '30px'
-          }}>
-            <div style={{ backgroundColor: '#161625', padding: '24px', borderRadius: '16px', border: '1px solid #2b2b45', textAlign: 'center', boxShadow: '0 8px 24px rgba(0,0,0,0.4)' }}>
+          <div
+            className="ds-stats-grid"
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+              gap: '24px',
+              marginTop: '30px',
+              marginBottom: '30px'
+            }}
+          >
+            <div className="ds-stat-card" style={{ backgroundColor: '#161625', padding: '24px', borderRadius: '16px', border: '1px solid #2b2b45', textAlign: 'center', boxShadow: '0 8px 24px rgba(0,0,0,0.4)' }}>
               <h3 style={{ color: '#00d2ff', margin: '0 0 10px 0' }}>Predicted Revenue</h3>
-              <p style={{ fontSize: '2.2rem', fontWeight: 'bold', margin: 0, color: '#ffffff' }}>
+              <p className="ds-stat-value" style={{ fontSize: '2.2rem', fontWeight: 'bold', margin: 0, color: '#ffffff' }}>
                 ${mlData.predicted_next_day_revenue}
               </p>
             </div>
 
-            <div style={{ backgroundColor: '#161625', padding: '24px', borderRadius: '16px', border: '1px solid #2b2b45', textAlign: 'center' }}>
+            <div className="ds-stat-card" style={{ backgroundColor: '#161625', padding: '24px', borderRadius: '16px', border: '1px solid #2b2b45', textAlign: 'center' }}>
               <h3 style={{ color: '#00d2ff', margin: '0 0 10px 0' }}>Expected Range</h3>
-              <p style={{ fontSize: '1.2rem', fontWeight: 'bold', margin: '15px 0 0 0', color: '#a0a0b5' }}>
+              <p className="ds-stat-value" style={{ fontSize: '1.2rem', fontWeight: 'bold', margin: '15px 0 0 0', color: '#a0a0b5' }}>
                 ${mlData.prediction_lower_bound} - ${mlData.prediction_upper_bound}
               </p>
               <p style={{ fontSize: '0.85rem', color: '#6b6b85', margin: '8px 0 0 0' }}>Based on 95% confidence interval</p>
             </div>
 
-            <div style={{ backgroundColor: '#161625', padding: '24px', borderRadius: '16px', border: '1px solid #2b2b45', textAlign: 'center' }}>
+            <div className="ds-stat-card" style={{ backgroundColor: '#161625', padding: '24px', borderRadius: '16px', border: '1px solid #2b2b45', textAlign: 'center' }}>
               <h3 style={{ color: '#00d2ff', margin: '0 0 10px 0' }}>Model Health</h3>
-              <p style={{
+              <p className="ds-stat-value" style={{
                 fontSize: '1.2rem',
                 fontWeight: 'bold',
                 margin: '15px 0 5px 0',
@@ -258,7 +415,9 @@ function Dashboard() {
           </div>
         )}
 
-        <RevenueChart data={data} mlData={mlData} />
+        <div className="ds-chart-section">
+          <RevenueChart data={data} mlData={mlData} />
+        </div>
       </div>
 
     </div>
