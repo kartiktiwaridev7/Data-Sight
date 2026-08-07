@@ -1,29 +1,44 @@
-# Dynamic Data Analytics Dashboard 📊
+# DataSight 🔭 | Full-Stack AI Analytics Engine
 
-A frontend data visualization architecture built with React and Vite, engineered to dynamically ingest, parse, and map datasets entirely within the browser.
+A modern, full-stack data analytics dashboard engineered to instantly ingest, analyze, and visualize complex datasets. DataSight bridges a highly responsive React frontend with a powerful Python machine learning backend to run real-time regression models and aggregate massive data points on the fly.
 
-**🔴 Live Production Build:** [View the Dashboard Here](https://kartiktiwaridev7.github.io/Data-Sight/)
+🔴 **Live Production Build:** [View the Dashboard Here](https://data-sight.netlify.app) 
 
 ## Architecture Overview
-This project demonstrates advanced frontend state management and data handling. Rather than relying on a static hardcoded file or a dedicated backend server, this application utilizes the browser's native `FileReader` API to accept custom JSON payloads from the user. It then dynamically recalculates aggregate metrics and renders interactive time-series visualizations in real-time.
+
+This project demonstrates an advanced client-server architecture designed for heavy data processing. Rather than forcing the browser to compute massive arrays, the frontend acts as a lightning-fast presentation layer. 
+
+The React client securely streams uploaded files to a dedicated FastAPI engine. The Python backend processes the raw data, executes multi-variable regressions, and returns optimized statistical summaries. The frontend then dynamically recalculates state and maps the results onto interactive time-series visualizations.
 
 ## Key Features
-*   **Dynamic Data Ingestion:** Client-side file upload engine processing custom JSON arrays.
-*   **Real-time Aggregation:** React `useMemo` hooks optimized to compute high-volume data summaries instantly (Total Users, Total Revenue) without mutating state.
-*   **Interactive Visualizations:** Integrated `recharts` library for scalable, responsive data mapping.
-*   **Modern Layout:** CSS Grid and Flexbox architecture for a clean UI structure.
+
+* **Seamless Data Ingestion:** Secure, client-side file upload engine built to process complex datasets without freezing the user interface.
+* **Real-Time Machine Learning:** Python-powered backend that instantly executes statistical regression, trend mapping, and anomaly detection.
+* **Interactive Visualizations:** Integrated `recharts` library optimized to render high-volume data summaries (Total Users, Revenue Forecasts) instantly without mutating state.
+* **Asynchronous Processing:** Non-blocking API endpoints configured with strict CORS policies to ensure secure, rapid data transfer between the client and the AI engine.
 
 ## Tech Stack
-*   **Framework:** React 19 (compiled via Vite)
-*   **Data Visualization:** Recharts
-*   **Deployment Engine:** GitHub Pages (`gh-pages`)
+
+**Frontend (Client UI)**
+* **Framework:** React 19 (compiled via Vite)
+* **Data Visualization:** Recharts
+* **Deployment Engine:** Netlify
+
+**Backend (AI & Processing)**
+* **Framework:** Python 3 & FastAPI
+* **Server & Routing:** Uvicorn
+* **Deployment Engine:** Render (Free Tier)
+
+---
 
 ## Local Installation & Testing
-To run this visualization tool locally on your own machine:
 
-## Local Installation & Testing
-To run this visualization tool locally on your own machine:
+To run this full-stack application locally on your own machine, you will need to start both the backend server and the frontend development environment.
 
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/kartiktiwaridev7/Data-Sight.git  
+### 1. Start the Python Backend
+Clone the backend repository and start the FastAPI server:
+```bash
+git clone https://github.com/kartiktiwaridev7/Data-Sight-Backend-.git
+cd Data-Sight-Backend-
+pip install -r requirements.txt
+uvicorn main:app --reload
