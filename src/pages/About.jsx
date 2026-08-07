@@ -50,7 +50,7 @@ function EngineOverview() {
       <div style={gridStyle}>
         {/* Frontend Card */}
         <div style={cardStyle} className="hover-card">
-          <div style={iconStyle}>⚡</div>
+          {/* <div style={iconStyle}>⚡</div> */}
           <h3 style={{ color: '#00d2ff', marginBottom: '10px' }}>Fast & Smooth Uploads</h3>
           <p style={{ color: '#a0a0b5', fontSize: '0.95rem', lineHeight: '1.5' }}>
             Instead of freezing your computer when you upload a massive spreadsheet, DataSight sends the heavy file 
@@ -61,7 +61,7 @@ function EngineOverview() {
 
         {/* Backend Card */}
         <div style={cardStyle} className="hover-card">
-          <div style={iconStyle}>🧠</div>
+          {/* <div style={iconStyle}>🧠</div> */}
           <h3 style={{ color: '#00d2ff', marginBottom: '10px' }}>Smart Data Reading</h3>
           <p style={{ color: '#a0a0b5', fontSize: '0.95rem', lineHeight: '1.5' }}>
             You don't need to format your files perfectly. The AI automatically scans whatever you upload, ignores text 
@@ -72,7 +72,7 @@ function EngineOverview() {
 
         {/* ML Card */}
         <div style={cardStyle} className="hover-card">
-          <div style={iconStyle}>📈</div>
+          {/* <div style={iconStyle}>📈</div> */}
           <h3 style={{ color: '#00d2ff', marginBottom: '10px' }}>Connecting the Dots</h3>
           <p style={{ color: '#a0a0b5', fontSize: '0.95rem', lineHeight: '1.5' }}>
             Instead of just looking at one thing at a time, the AI looks at the big picture. It analyzes multiple 
@@ -83,7 +83,7 @@ function EngineOverview() {
 
         {/* UI/State Card */}
         <div style={cardStyle} className="hover-card">
-          <div style={iconStyle}>💾</div>
+          {/* <div style={iconStyle}>💾</div> */}
           <h3 style={{ color: '#00d2ff', marginBottom: '10px' }}>Seamless Experience</h3>
           <p style={{ color: '#a0a0b5', fontSize: '0.95rem', lineHeight: '1.5' }}>
             Just like top-tier professional software, DataSight remembers what you are doing. If you switch between 

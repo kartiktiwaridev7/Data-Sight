@@ -72,14 +72,15 @@ function Developer() {
             Before building DataSight, I created projects like CardioCore—a full web-based hospital application featuring 
             a heart disease prediction model. 
           </p>
+          
           <p>
-            Outside of the code editor, I step away from the screen by doing calisthenics, meditating, and reading 
-            fantasy novels to keep a healthy balance.
-          </p>
+            Curretly I am doing freelnce projects and I love to connect with you If You are intrested in M.l and create a bridge b/w Machine learning model
+            and frontend applications that solves real world problem and you can find me through my link-din and connect with trough 
+            my Portfolio . 
+            </p>
+          
           <p>
-            I believe that connecting with people is way more important than trying to sound perfect all the time. 
-            We are human, we make mistakes, and honestly, the best collaborations happen when we just drop the perfectionism 
-            and build cool things together. If you have a freelance project in mind, or just want to chat about tech, I'd love to connect!
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Kartik Tiwari
           </p>
         </div>
 
