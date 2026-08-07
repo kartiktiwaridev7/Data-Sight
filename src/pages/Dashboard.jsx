@@ -28,8 +28,7 @@ function Dashboard() {
     try {
       const formData = new FormData();
       formData.append("file", file);
-
-      const response = await fetch("http://localhost:8000/analyze/upload", {
+       const response = await fetch("https://data-sight-backend.onrender.com/analyze/upload", {
         method: "POST",
         body: formData,
         // Note: NEVER set 'Content-Type' manually when using FormData.
