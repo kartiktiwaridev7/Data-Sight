@@ -11,10 +11,20 @@ import {
 } from 'recharts';
 
 function RevenueChart({ data, mlData }) {
-  if (!data || data.length === 0) return null;
+  // Prefer the backend's resolved/aggregated series over the raw browser
+  // parse. The backend already turned messy real-world columns (year+month,
+  // gross_revenue_usd, estimated_active_players, etc.) and multiple rows
+  // per period into one clean point per date -- the same series the model
+  // was actually trained on. Re-parsing the raw upload in the browser has
+  // no idea those columns mean "date"/"revenue", so on files that don't
+  // literally have columns named that, every point came back undefined and
+  // the chart rendered empty even though the AI cards above it worked fine.
+  const seriesSource = mlData?.historical_series?.length ? mlData.historical_series : data;
+
+  if (!seriesSource || seriesSource.length === 0) return null;
 
   // 1. Clone the data so we don't accidentally mutate the original state
-  const chartData = data.map(item => ({
+  const chartData = seriesSource.map(item => ({
     date: item.date,
     revenue: item.revenue,
     predictedRevenue: null // Null means no dashed line for historical days
