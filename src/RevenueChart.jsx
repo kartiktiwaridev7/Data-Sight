@@ -22,21 +22,28 @@ function RevenueChart({ data, mlData }) {
 
   // 2. If the AI has processed the data, inject the future prediction!
   if (mlData) {
-    // Grab the very last day of historical data to connect the lines
     const lastPoint = chartData[chartData.length - 1];
     lastPoint.predictedRevenue = lastPoint.revenue; // Anchor the prediction line
 
-    // Calculate tomorrow's date for the X-Axis
-    const lastDate = new Date(lastPoint.date);
-    lastDate.setDate(lastDate.getDate() + 1);
-    const nextDayString = lastDate.toISOString().split('T')[0];
+    const rawLastDate = lastPoint.date || lastPoint.Date;
 
-    // Append the AI's prediction as a brand new day
-    chartData.push({
-      date: `${nextDayString} (AI)`,
-      revenue: null, // Null means no solid line for the future
-      predictedRevenue: mlData.predicted_next_day_revenue
-    });
+    if (rawLastDate) {
+      const lastDate = new Date(rawLastDate);
+
+      if (!isNaN(lastDate.getTime())) {
+        lastDate.setDate(lastDate.getDate() + 1);
+        const nextDayString = lastDate.toISOString().split('T')[0];
+
+        // NOTE: the backend field is `predicted_next_day_revenue`, not
+        // `predicted_total_revenue` -- that mismatch was why the forecast
+        // point on the chart never appeared.
+        chartData.push({
+          date: `${nextDayString} (AI)`,
+          revenue: null, // Null means no solid line for the future
+          predictedRevenue: mlData.predicted_next_day_revenue
+        });
+      }
+    }
   }
 
   return (
@@ -47,34 +54,31 @@ function RevenueChart({ data, mlData }) {
           <CartesianGrid strokeDasharray="3 3" stroke="#2b2b45" />
           <XAxis dataKey="date" stroke="#a0a0b5" tick={{ fill: '#a0a0b5' }} />
           <YAxis stroke="#a0a0b5" tick={{ fill: '#a0a0b5' }} />
-          
-          {/* Custom Dark Theme Tooltip */}
-          <Tooltip 
+
+          <Tooltip
             contentStyle={{ backgroundColor: '#161625', borderColor: '#2b2b45', color: '#fff' }}
             itemStyle={{ color: '#00d2ff' }}
           />
           <Legend wrapperStyle={{ paddingTop: '20px' }}/>
 
-          {/* Solid Historical Line */}
-          <Line 
-            type="monotone" 
-            dataKey="revenue" 
+          <Line
+            type="monotone"
+            dataKey="revenue"
             name="Historical Revenue"
-            stroke="#00e676" /* Green for past */
-            strokeWidth={3} 
+            stroke="#00e676"
+            strokeWidth={3}
             dot={{ r: 4, fill: '#00e676', stroke: '#161625', strokeWidth: 2 }}
-            activeDot={{ r: 6 }} 
+            activeDot={{ r: 6 }}
           />
 
-          {/* Dashed Future Prediction Line */}
           {mlData && (
-            <Line 
-              type="monotone" 
-              dataKey="predictedRevenue" 
+            <Line
+              type="monotone"
+              dataKey="predictedRevenue"
               name="AI Forecast"
-              stroke="#ffea00" /* Yellow for future */
-              strokeWidth={3} 
-              strokeDasharray="5 5" /* Makes it a dashed line! */
+              stroke="#ffea00"
+              strokeWidth={3}
+              strokeDasharray="5 5"
               dot={{ r: 5, fill: '#ffea00', stroke: '#161625', strokeWidth: 2 }}
             />
           )}

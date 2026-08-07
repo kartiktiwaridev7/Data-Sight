@@ -4,7 +4,7 @@ function DataTable({ data: propData }) {
   const [currentPage, setCurrentPage] = useState(1);
   const rowsPerPage = 100;
 
-  // If the React Router drops the prop during navigation, pull it directly from browser memory.
+  // State Recovery from browser memory
   const rawSessionData = sessionStorage.getItem('dashboardData');
   const data = propData || (rawSessionData ? JSON.parse(rawSessionData) : null);
 
@@ -21,6 +21,10 @@ function DataTable({ data: propData }) {
   const indexOfFirstRow = indexOfLastRow - rowsPerPage;
   const currentRows = data.slice(indexOfFirstRow, indexOfLastRow);
   const totalPages = Math.ceil(data.length / rowsPerPage);
+
+  // 🚀 INDUSTRY FIX: Dynamic Schema Detection
+  // Automatically detects every column header in your CSV (whether it's 3 or 25 columns)
+  const headers = Object.keys(data[0] || {});
 
   const handleNext = () => {
     if (currentPage < totalPages) setCurrentPage(currentPage + 1);
@@ -40,22 +44,33 @@ function DataTable({ data: propData }) {
       </div>
 
       <div style={{ overflowX: 'auto', backgroundColor: '#161625', borderRadius: '8px', border: '1px solid #2b2b45' }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+        {/* whiteSpace: 'nowrap' ensures that 20 columns don't crush together horizontally */}
+        <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', whiteSpace: 'nowrap' }}>
           <thead>
             <tr style={{ backgroundColor: '#1c1c28', borderBottom: '2px solid #2b2b45' }}>
-              <th style={{ padding: '12px 15px', color: '#00d2ff' }}>Date</th>
-              <th style={{ padding: '12px 15px', color: '#00d2ff' }}>Users</th>
-              <th style={{ padding: '12px 15px', color: '#00d2ff' }}>Revenue</th>
+              {headers.map((header, index) => (
+                <th key={index} style={{ padding: '12px 15px', color: '#00d2ff', textTransform: 'capitalize' }}>
+                  {header.replace(/_/g, ' ')}
+                </th>
+              ))}
             </tr>
           </thead>
           <tbody>
-            {currentRows.map((row, index) => (
-              <tr key={index} style={{ borderBottom: '1px solid #2b2b45' }}>
-                <td style={{ padding: '10px 15px', color: '#e0e0e0' }}>{row.date || row.Date}</td>
-                <td style={{ padding: '10px 15px', color: '#e0e0e0' }}>{row.users || row.Users}</td>
-                <td style={{ padding: '10px 15px', color: '#e0e0e0' }}>
-                  {row.revenue ? `$${Number(row.revenue).toFixed(2)}` : (row.Revenue ? `$${Number(row.Revenue).toFixed(2)}` : 'N/A')}
-                </td>
+            {currentRows.map((row, rowIndex) => (
+              <tr key={rowIndex} style={{ borderBottom: '1px solid #2b2b45' }}>
+                {headers.map((header, colIndex) => {
+                  const cellValue = row[header];
+                  const isNumber = typeof cellValue === 'number';
+                  
+                  return (
+                    <td key={colIndex} style={{ padding: '10px 15px', color: '#e0e0e0' }}>
+                      {/* Automatically format anything with 'revenue' in the name as currency */}
+                      {isNumber && header.toLowerCase().includes('revenue') 
+                        ? `$${cellValue.toFixed(2)}` 
+                        : cellValue}
+                    </td>
+                  );
+                })}
               </tr>
             ))}
           </tbody>
