@@ -11,14 +11,6 @@ import {
 } from 'recharts';
 
 function RevenueChart({ data, mlData }) {
-  // Prefer the backend's resolved/aggregated series over the raw browser
-  // parse. The backend already turned messy real-world columns (year+month,
-  // gross_revenue_usd, estimated_active_players, etc.) and multiple rows
-  // per period into one clean point per date -- the same series the model
-  // was actually trained on. Re-parsing the raw upload in the browser has
-  // no idea those columns mean "date"/"revenue", so on files that don't
-  // literally have columns named that, every point came back undefined and
-  // the chart rendered empty even though the AI cards above it worked fine.
   const seriesSource = mlData?.historical_series?.length ? mlData.historical_series : data;
 
   if (!seriesSource || seriesSource.length === 0) return null;
@@ -44,9 +36,6 @@ function RevenueChart({ data, mlData }) {
         lastDate.setDate(lastDate.getDate() + 1);
         const nextDayString = lastDate.toISOString().split('T')[0];
 
-        // NOTE: the backend field is `predicted_next_day_revenue`, not
-        // `predicted_total_revenue` -- that mismatch was why the forecast
-        // point on the chart never appeared.
         chartData.push({
           date: `${nextDayString} (AI)`,
           revenue: null, // Null means no solid line for the future
@@ -57,43 +46,80 @@ function RevenueChart({ data, mlData }) {
   }
 
   return (
-    <div style={{ width: '100%', height: 400, marginTop: '20px' }}>
-      <h3 style={{ color: '#ffffff', marginBottom: '20px' }}>Revenue Trend & Forecast</h3>
-      <ResponsiveContainer>
-        <LineChart data={chartData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#2b2b45" />
-          <XAxis dataKey="date" stroke="#a0a0b5" tick={{ fill: '#a0a0b5' }} />
-          <YAxis stroke="#a0a0b5" tick={{ fill: '#a0a0b5' }} />
+    <div
+      style={{
+        width: '100%',
+        marginTop: '20px',
+        backgroundColor: '#161625',
+        padding: 'clamp(14px, 3vw, 24px)',
+        borderRadius: '16px',
+        border: '1px solid #2b2b45',
+        boxSizing: 'border-box',
+      }}
+    >
+      <h3
+        style={{
+          color: '#ffffff',
+          margin: '0 0 16px 0',
+          fontSize: 'clamp(1.1rem, 2.5vw, 1.35rem)',
+        }}
+      >
+        Revenue Trend & Forecast
+      </h3>
 
-          <Tooltip
-            contentStyle={{ backgroundColor: '#161625', borderColor: '#2b2b45', color: '#fff' }}
-            itemStyle={{ color: '#00d2ff' }}
-          />
-          <Legend wrapperStyle={{ paddingTop: '20px' }}/>
+      {/* Dedicated height box so ResponsiveContainer never overflows the heading */}
+      <div style={{ width: '100%', height: 'clamp(260px, 45vw, 380px)' }}>
+        <ResponsiveContainer width="100%" height="100%">
+          <LineChart data={chartData} margin={{ top: 10, right: 16, left: 0, bottom: 5 }}>
+            <CartesianGrid strokeDasharray="3 3" stroke="#2b2b45" />
+            <XAxis
+              dataKey="date"
+              stroke="#a0a0b5"
+              tick={{ fill: '#a0a0b5', fontSize: 12 }}
+              minTickGap={25}
+            />
+            <YAxis
+              stroke="#a0a0b5"
+              tick={{ fill: '#a0a0b5', fontSize: 12 }}
+              width={55}
+            />
 
-          <Line
-            type="monotone"
-            dataKey="revenue"
-            name="Historical Revenue"
-            stroke="#00e676"
-            strokeWidth={3}
-            dot={{ r: 4, fill: '#00e676', stroke: '#161625', strokeWidth: 2 }}
-            activeDot={{ r: 6 }}
-          />
+            <Tooltip
+              contentStyle={{
+                backgroundColor: '#161625',
+                borderColor: '#2b2b45',
+                color: '#fff',
+                borderRadius: '8px',
+                fontSize: '0.85rem',
+              }}
+              itemStyle={{ color: '#00d2ff' }}
+            />
+            <Legend wrapperStyle={{ paddingTop: '12px', fontSize: '0.9rem' }} />
 
-          {mlData && (
             <Line
               type="monotone"
-              dataKey="predictedRevenue"
-              name="AI Forecast"
-              stroke="#ffea00"
+              dataKey="revenue"
+              name="Historical Revenue"
+              stroke="#00e676"
               strokeWidth={3}
-              strokeDasharray="5 5"
-              dot={{ r: 5, fill: '#ffea00', stroke: '#161625', strokeWidth: 2 }}
+              dot={{ r: 3, fill: '#00e676', stroke: '#161625', strokeWidth: 2 }}
+              activeDot={{ r: 6 }}
             />
-          )}
-        </LineChart>
-      </ResponsiveContainer>
+
+            {mlData && (
+              <Line
+                type="monotone"
+                dataKey="predictedRevenue"
+                name="AI Forecast"
+                stroke="#ffea00"
+                strokeWidth={3}
+                strokeDasharray="5 5"
+                dot={{ r: 5, fill: '#ffea00', stroke: '#161625', strokeWidth: 2 }}
+              />
+            )}
+          </LineChart>
+        </ResponsiveContainer>
+      </div>
     </div>
   );
 }

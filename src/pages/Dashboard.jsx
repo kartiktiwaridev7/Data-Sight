@@ -28,7 +28,7 @@ function Dashboard() {
     try {
       const formData = new FormData();
       formData.append("file", file);
-       const response = await fetch("https://data-sight-backend.onrender.com/analyze/upload", {
+      const response = await fetch("https://data-sight-backend.onrender.com/analyze/upload", {
         method: "POST",
         body: formData,
         // Note: NEVER set 'Content-Type' manually when using FormData.
@@ -110,8 +110,17 @@ function Dashboard() {
   };
 
   return (
-    <div className="dashboard-wrapper">
-      {/* Scoped animation styles — colors untouched, purely motion/structure */}
+    <div
+      className="dashboard-wrapper"
+      style={{
+        width: '100%',
+        maxWidth: '1200px',
+        margin: '0 auto',
+        padding: 'clamp(12px, 3vw, 24px)',
+        boxSizing: 'border-box',
+      }}
+    >
+      {/* Scoped animation & responsive styles — colors untouched */}
       <style>{`
         @keyframes ds-fadeInDown {
           from { opacity: 0; transform: translateY(-14px); }
@@ -143,17 +152,13 @@ function Dashboard() {
           0%, 100% { box-shadow: 0 0 0 0 rgba(0, 210, 255, 0.35); }
           50% { box-shadow: 0 0 0 10px rgba(0, 210, 255, 0); }
         }
-        @keyframes ds-shimmer {
-          0% { background-position: -200% 0; }
-          100% { background-position: 200% 0; }
-        }
-        @keyframes ds-dash {
-          from { stroke-dashoffset: 24; }
-          to { stroke-dashoffset: 0; }
-        }
 
         .ds-header {
           animation: ds-fadeInDown 0.55s ease both;
+        }
+        .ds-header h1 {
+          font-size: clamp(1.5rem, 4vw, 2.2rem);
+          margin: 0 0 16px 0;
         }
         .ds-error {
           animation: ds-shake 0.5s ease, ds-fadeIn 0.3s ease both;
@@ -164,6 +169,7 @@ function Dashboard() {
         .ds-upload-zone {
           animation: ds-scaleIn 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
           transition: border-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+          padding: clamp(24px, 5vw, 48px) clamp(16px, 4vw, 32px);
         }
         .ds-upload-zone:hover {
           transform: translateY(-2px);
@@ -189,6 +195,11 @@ function Dashboard() {
 
         .ds-toolbar {
           animation: ds-fadeInDown 0.45s ease both;
+          display: flex;
+          flex-wrap: wrap;
+          justify-content: flex-end;
+          gap: 12px;
+          margin-top: 20px;
         }
         .ds-btn {
           transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease, background-color 0.2s ease;
@@ -214,6 +225,8 @@ function Dashboard() {
         .ds-stat-card {
           animation: ds-fadeInUp 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
           transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+          min-width: 0;
+          word-break: break-word;
         }
         .ds-stat-card:hover {
           transform: translateY(-6px);
@@ -234,6 +247,32 @@ function Dashboard() {
         .ds-chart-section {
           animation: ds-fadeInUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
           animation-delay: 0.3s;
+          width: 100%;
+          min-width: 0;
+          overflow-x: hidden;
+        }
+
+        /* --- Mobile & Tablet Breakpoint --- */
+        @media (max-width: 640px) {
+          .ds-header {
+            text-align: center;
+          }
+          .ds-processing-time {
+            text-align: center !important;
+          }
+          .ds-toolbar {
+            justify-content: stretch;
+          }
+          .ds-toolbar .ds-btn {
+            flex: 1 1 100%;
+            width: 100%;
+            text-align: center;
+            justify-content: center;
+          }
+          .ds-file-label {
+            width: 100%;
+            box-sizing: border-box;
+          }
         }
 
         @media (prefers-reduced-motion: reduce) {
@@ -262,7 +301,8 @@ function Dashboard() {
             borderRadius: '8px',
             marginBottom: '20px',
             textAlign: 'center',
-            fontWeight: 'bold'
+            fontWeight: 'bold',
+            wordBreak: 'break-word',
           }}
         >
           ⚠️ {errorMessage}
@@ -290,7 +330,7 @@ function Dashboard() {
           {isLoading ? (
             <div
               className="ds-loading-text"
-              style={{ color: '#00d2ff', marginTop: '20px', fontWeight: 'bold', fontSize: '1.2rem' }}
+              style={{ color: '#00d2ff', marginTop: '20px', fontWeight: 'bold', fontSize: 'clamp(1rem, 2.5vw, 1.2rem)' }}
             >
               <span className="ds-spinner">⚙️</span> AI Engine is analyzing data...
             </div>
@@ -309,8 +349,7 @@ function Dashboard() {
       )}
 
       {mlData && (
-        <div className="ds-toolbar" style={{ display: 'flex', justifyContent: 'flex-end', gap: '15px', marginTop: '20px' }}>
-
+        <div className="ds-toolbar">
           <button
             onClick={resetDashboard}
             className="ds-btn"
@@ -369,38 +408,38 @@ function Dashboard() {
         </div>
       )}
 
-      <div ref={reportRef} style={{ padding: '10px' }}>
+      <div ref={reportRef} style={{ padding: 'clamp(4px, 1.5vw, 10px)' }}>
 
         {mlData && (
           <div
             className="ds-stats-grid"
             style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-              gap: '24px',
-              marginTop: '30px',
-              marginBottom: '30px'
+              gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 240px), 1fr))',
+              gap: 'clamp(16px, 2.5vw, 24px)',
+              marginTop: 'clamp(20px, 3vw, 30px)',
+              marginBottom: 'clamp(20px, 3vw, 30px)'
             }}
           >
-            <div className="ds-stat-card" style={{ backgroundColor: '#161625', padding: '24px', borderRadius: '16px', border: '1px solid #2b2b45', textAlign: 'center', boxShadow: '0 8px 24px rgba(0,0,0,0.4)' }}>
+            <div className="ds-stat-card" style={{ backgroundColor: '#161625', padding: 'clamp(18px, 3vw, 24px)', borderRadius: '16px', border: '1px solid #2b2b45', textAlign: 'center', boxShadow: '0 8px 24px rgba(0,0,0,0.4)' }}>
               <h3 style={{ color: '#00d2ff', margin: '0 0 10px 0' }}>Predicted Revenue</h3>
-              <p className="ds-stat-value" style={{ fontSize: '2.2rem', fontWeight: 'bold', margin: 0, color: '#ffffff' }}>
+              <p className="ds-stat-value" style={{ fontSize: 'clamp(1.6rem, 4vw, 2.2rem)', fontWeight: 'bold', margin: 0, color: '#ffffff' }}>
                 ${mlData.predicted_next_day_revenue}
               </p>
             </div>
 
-            <div className="ds-stat-card" style={{ backgroundColor: '#161625', padding: '24px', borderRadius: '16px', border: '1px solid #2b2b45', textAlign: 'center' }}>
+            <div className="ds-stat-card" style={{ backgroundColor: '#161625', padding: 'clamp(18px, 3vw, 24px)', borderRadius: '16px', border: '1px solid #2b2b45', textAlign: 'center' }}>
               <h3 style={{ color: '#00d2ff', margin: '0 0 10px 0' }}>Expected Range</h3>
-              <p className="ds-stat-value" style={{ fontSize: '1.2rem', fontWeight: 'bold', margin: '15px 0 0 0', color: '#a0a0b5' }}>
+              <p className="ds-stat-value" style={{ fontSize: 'clamp(1.05rem, 2.5vw, 1.2rem)', fontWeight: 'bold', margin: '15px 0 0 0', color: '#a0a0b5' }}>
                 ${mlData.prediction_lower_bound} - ${mlData.prediction_upper_bound}
               </p>
               <p style={{ fontSize: '0.85rem', color: '#6b6b85', margin: '8px 0 0 0' }}>Based on 95% confidence interval</p>
             </div>
 
-            <div className="ds-stat-card" style={{ backgroundColor: '#161625', padding: '24px', borderRadius: '16px', border: '1px solid #2b2b45', textAlign: 'center' }}>
+            <div className="ds-stat-card" style={{ backgroundColor: '#161625', padding: 'clamp(18px, 3vw, 24px)', borderRadius: '16px', border: '1px solid #2b2b45', textAlign: 'center' }}>
               <h3 style={{ color: '#00d2ff', margin: '0 0 10px 0' }}>Model Health</h3>
               <p className="ds-stat-value" style={{
-                fontSize: '1.2rem',
+                fontSize: 'clamp(1.05rem, 2.5vw, 1.2rem)',
                 fontWeight: 'bold',
                 margin: '15px 0 5px 0',
                 color: mlData.model_confidence === 'high' ? '#00e676' : mlData.model_confidence === 'medium' ? '#ffea00' : '#ff3d00'
