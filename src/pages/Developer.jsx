@@ -93,7 +93,7 @@ function Developer() {
         >
           <div>📍 Ghaziabad, India</div>
           <div>🎓 Final-Year BCA Student at CCSU</div>
-          <div>💻 Specialized in React, Python, and M.L.</div>
+          <div>💻 Specialized in React and M.L.</div>
         </div>
 
         <h3
